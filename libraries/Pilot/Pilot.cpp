@@ -124,8 +124,5 @@ boolean Pilot::waitForNav() {
 }
 
 void Pilot::setCourse() {
-  waitForNav();
-
-  LeftRightCenter lrc = _nav->leftRightCenter();
-  _drive->direction(lrc);
+  _drive->direction(_nav->courseChangeNeeded());
 }

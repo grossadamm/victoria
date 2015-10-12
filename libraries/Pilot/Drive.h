@@ -13,8 +13,9 @@ class Drive
     void attemptClear();
     boolean isOn();
     boolean isOff();
-    void direction(LeftRightCenter leftRightCenter);
+    void direction(int leftRightCenter);
   private:
+    boolean _on;
 };
 
 #endif

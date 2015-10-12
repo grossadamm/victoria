@@ -16,9 +16,6 @@ const PROGMEM int WAYPOINT_COUNT_POSITION = 1;
 static const int RXPin = 15, TXPin = 14;
 static const uint32_t GPSBaud = 4800;
 
-// The TinyGPS++ object
-TinyGPSPlus gps;
-
 // The serial connection to the GPS device
 SoftwareSerial ss(RXPin, TXPin);
 
@@ -26,19 +23,30 @@ Navigation::Navigation(Sensors* sensors)
 {
   _sensors = sensors;
   ss.begin(GPSBaud);
+  _currentWaypoint = MEMORY_VALIDATING_WAYPOINT;
 }
 
 boolean Navigation::ready()
 {
   _numberOfWaypoints = retrieveWaypointCount();
 
-  Waypoint waypoint = retrieveWaypoint(WAYPOINT_STORAGE_OFFSET);
+  Waypoint waypoint = retrieveWaypoint(0);
 
-  if(compareWaypoints(waypoint, MEMORY_VALIDATING_WAYPOINT)){
-    return true;
-  } else {
+  if(!compareWaypoints(waypoint, MEMORY_VALIDATING_WAYPOINT)){
     return false;
   }
+
+  if(compareWaypoints(_currentWaypoint, MEMORY_VALIDATING_WAYPOINT)) {
+    _currentWaypoint = retrieveWaypoint(1);
+  }
+
+  while (ss.available() > 0) // read gps data if available
+    _gps.encode(ss.read());
+
+  if(!_gps.location.isValid()) // too old for navigation?
+    return false;
+
+  return true;
 }
 
 void Navigation::resetWaypoints() {
@@ -118,7 +126,7 @@ void Navigation::shiftWaypointsForward()
 void Navigation::printWaypoint(Waypoint waypoint){
   Serial.println(waypoint.latitude);
   Serial.println(waypoint.longitude);
-  Serial.println(waypoint.radius);
+  Serial.println(waypoint.radiusHectometers);
 }
 
 boolean Navigation::validateWaypoint(Waypoint waypoint)
@@ -137,16 +145,32 @@ boolean Navigation::compareWaypoints(Waypoint wp1, Waypoint wp2)
 {
   return wp1.longitude == wp2.longitude &&
          wp1.latitude  == wp2.latitude &&
-         wp1.radius    == wp2.radius;
+         wp1.radiusHectometers    == wp2.radiusHectometers;
 }
 
-LeftRightCenter Navigation::leftRightCenter() 
+int Navigation::courseChangeNeeded() 
 {
   // compare current waypoint to gps
   // if matched, shift forward
   // 
   // set course towards waypoint
-  return CENTER;
+  // get current course
+  double currentCourse = _gps.course.deg();
+  double desiredCourse = TinyGPSPlus::courseTo(
+      _gps.location.lat(),
+      _gps.location.lng(),
+      (double) _currentWaypoint.latitude,
+      (double) _currentWaypoint.longitude);
+
+  // course difference
+  int courseChangeNeeded = (int)(360 + desiredCourse - currentCourse) % 360;
+
+  // make left negative and right positive
+  if(courseChangeNeeded > 180) {
+    courseChangeNeeded = courseChangeNeeded - 360;
+  } 
+
+  return courseChangeNeeded;
 }
 
 int Navigation::waypointEepromPosition(int waypointIndex)

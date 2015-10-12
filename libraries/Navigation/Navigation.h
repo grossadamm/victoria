@@ -11,16 +11,9 @@ typedef struct Waypoint
 {
   float latitude;
   float longitude;
-  int radius;
+  int radiusHectometers;
   byte checksum;
 } Waypoint;
-
-enum LeftRightCenter
-{
-  LEFT,
-  RIGHT,
-  CENTER
-};
 
 class Navigation
 {
@@ -33,7 +26,7 @@ class Navigation
     void storeWaypoint(Waypoint& waypoint, int waypointIndex);
     void storeWaypoint(const Waypoint& waypoint, int waypointIndex);
     Waypoint retrieveWaypoint(int waypointIndex);
-    LeftRightCenter leftRightCenter();
+    int courseChangeNeeded();
   private:
     boolean validateWaypoint(Waypoint waypoint);
     boolean compareWaypoints(Waypoint wp1, Waypoint wp2);
@@ -41,9 +34,10 @@ class Navigation
     int retrieveWaypointCount();
     void shiftWaypointsForward();
     byte CRC8(const byte *data, byte len);
-    TinyGPSPlus gps;
+    TinyGPSPlus _gps;
     Sensors* _sensors;
     int _numberOfWaypoints;
+    Waypoint _currentWaypoint;
 };
 
 
