@@ -47,6 +47,7 @@ void Pilot::manageComms() {
   if(_comms->needToCommunicate()) {
     byte message[50];
     _comms->buildMessage(message);
+
     boolean wasOn = _drive->isOn();
     _drive->off();
     _comms->sendMessage(message);
@@ -128,5 +129,5 @@ boolean Pilot::waitForNav() {
 
 void Pilot::setCourse() {
   waitForNav();
-  _drive->direction(_nav->courseChangeNeeded());
+  _drive->direction(_nav->courseChangeNeeded()); // TODO is it possible to set change while drive off?
 }
