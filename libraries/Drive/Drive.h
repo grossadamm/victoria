@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Navigation.h"
+#include "Servo.h"
 
 class Drive
 {
@@ -14,8 +15,15 @@ class Drive
     boolean isOn();
     boolean isOff();
     void direction(int leftRightCenter);
+    void currentExceeded();
   private:
+    void turnRudder(int leftRightCenter);
+    void turnSecondaryDrive(int leftRightCenter);
     boolean _on;
+    boolean _useMainDrive;
+    boolean _useRudder;
+    boolean _useSecondaryDrive;
+    Servo _directionServo;
 };
 
 #endif

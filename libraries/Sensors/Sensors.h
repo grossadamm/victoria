@@ -33,8 +33,8 @@ class Sensors
     Temperatures retrieveTemperatures();
     boolean night();
     boolean day();
-    boolean batteryAbove50();
-    boolean batteryBelow50();
+    boolean batteryAbove(int percent);
+    boolean batteryBelow(int percent);
     boolean currentAbove15Amps();
     boolean storming();
     boolean timeout(time_t& futureTime, int seconds);

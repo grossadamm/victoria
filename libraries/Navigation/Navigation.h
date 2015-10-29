@@ -33,6 +33,7 @@ class Navigation
     int waypointEepromPosition(int waypointIndex);
     int retrieveWaypointCount();
     void shiftWaypointsForward();
+    boolean validateEeprom();
     byte CRC8(const byte *data, byte len);
     TinyGPSPlus _gps;
     Sensors* _sensors;

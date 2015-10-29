@@ -1,4 +1,5 @@
 // Pilot
+#include <Servo.h>
 #include <Drive.h>
 #include <Pilot.h>
 
@@ -54,6 +55,7 @@ boolean STATE = false;
 // 27: LIGHTENING MOSFET
 // 28: PHOTORESISTOR MOSFET
 // 29: ROTATION MOSFET
+// 30: DIRECTION_SERVO_PIN
 
 void setup()
 {
@@ -69,10 +71,11 @@ void setup()
   delay(100);
 }
 
+unsigned long time;
 void loop()
 {
+  time = millis();
   pilot->run();
-  
-  delay(3000);
+  Serial.println(millis() - time);
 }
 

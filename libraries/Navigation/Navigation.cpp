@@ -1,4 +1,4 @@
-#include "Arduino.h"
+// #include "Arduino.h"
 #include "Navigation.h"
 #include "EEPROM.h"
 #include "EEPROMAnything.h"
@@ -13,6 +13,8 @@ const PROGMEM int MAX_WAYPOINTS = 362;
 const PROGMEM int WAYPOINT_STORAGE_OFFSET = 2;
 const PROGMEM int WAYPOINT_COUNT_POSITION = 1;
 
+const PROGMEM int GPS_MOSFET = 24;
+
 static const int RXPin = 15, TXPin = 14;
 static const uint32_t GPSBaud = 4800;
 
@@ -24,29 +26,23 @@ Navigation::Navigation(Sensors* sensors)
   _sensors = sensors;
   ss.begin(GPSBaud);
   _currentWaypoint = MEMORY_VALIDATING_WAYPOINT;
-}
-
-boolean Navigation::ready()
-{
-  _numberOfWaypoints = retrieveWaypointCount();
-
-  Waypoint waypoint = retrieveWaypoint(0);
-
-  if(!compareWaypoints(waypoint, MEMORY_VALIDATING_WAYPOINT)){
-    return false;
-  }
 
   if(compareWaypoints(_currentWaypoint, MEMORY_VALIDATING_WAYPOINT)) {
     _currentWaypoint = retrieveWaypoint(1);
   }
+  validateEeprom();
+}
 
+boolean Navigation::ready()
+{
+  digitalWrite(GPS_MOSFET, HIGH);
   while (ss.available() > 0) // read gps data if available
     _gps.encode(ss.read());
 
-  if(!_gps.location.isValid()) // too old for navigation?
-    return false;
+  if(_gps.location.isValid()) // current data?
+    return true;
 
-  return true;
+  return false;
 }
 
 void Navigation::resetWaypoints() {
@@ -151,10 +147,19 @@ boolean Navigation::compareWaypoints(Waypoint wp1, Waypoint wp2)
 int Navigation::courseChangeNeeded() 
 {
   // compare current waypoint to gps
-  // if matched, shift forward
-  // 
-  // set course towards waypoint
+  // if matched, shift forward waypoints
+  double distanceToDestination = TinyGPSPlus::distanceBetween(
+      _gps.location.lat(), _gps.location.lng(),
+      (double) _currentWaypoint.latitude,
+      (double) _currentWaypoint.longitude) / 100; // for hectometers
+  
+  if(distanceToDestination <  _currentWaypoint.radiusHectometers) {
+    shiftWaypointsForward();
+    _currentWaypoint = retrieveWaypoint(1);
+  }
+
   // get current course
+  // get desired course
   double currentCourse = _gps.course.deg();
   double desiredCourse = TinyGPSPlus::courseTo(
       _gps.location.lat(),
@@ -170,6 +175,7 @@ int Navigation::courseChangeNeeded()
     courseChangeNeeded = courseChangeNeeded - 360;
   } 
 
+  // return -180(left) to 180(right) as integer
   return courseChangeNeeded;
 }
 
@@ -181,4 +187,16 @@ int Navigation::waypointEepromPosition(int waypointIndex)
 int Navigation::retrieveWaypointCount() 
 {
   return (int) EEPROM.read(WAYPOINT_COUNT_POSITION);
+}
+
+boolean Navigation::validateEeprom() {
+  _numberOfWaypoints = retrieveWaypointCount();
+
+  Waypoint waypoint = retrieveWaypoint(0);
+
+  if(!compareWaypoints(waypoint, MEMORY_VALIDATING_WAYPOINT)){
+    return false;
+  }
+
+  return true;
 }

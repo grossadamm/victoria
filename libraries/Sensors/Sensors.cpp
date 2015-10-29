@@ -44,12 +44,12 @@ boolean Sensors::day()
   return true;
 }
 
-boolean Sensors::batteryAbove50()
+boolean Sensors::batteryAbove(int percent)
 {
   return true;
 }
 
-boolean Sensors::batteryBelow50()
+boolean Sensors::batteryBelow(int percent)
 {
   return false;
 }
