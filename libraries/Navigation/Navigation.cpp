@@ -25,12 +25,8 @@ Navigation::Navigation(Sensors* sensors)
 {
   _sensors = sensors;
   ss.begin(GPSBaud);
-  _currentWaypoint = MEMORY_VALIDATING_WAYPOINT;
-
-  if(compareWaypoints(_currentWaypoint, MEMORY_VALIDATING_WAYPOINT)) {
-    _currentWaypoint = retrieveWaypoint(1);
-  }
-  validateEeprom();
+  validateEeprom(); // TODO what good is this?
+  _currentWaypoint = retrieveWaypoint(1);
 }
 
 boolean Navigation::ready()
@@ -103,8 +99,7 @@ Waypoint Navigation::retrieveWaypoint(int waypointNumber)
   Waypoint waypoint;
   EEPROM_readAnything(waypointEepromPosition(waypointNumber), waypoint);
   if(!validateWaypoint(waypoint)) {
-    Serial.println("checksum failed");
-    return CHECKSUM_FAILED_WAYPOINT;
+    return CHECKSUM_FAILED_WAYPOINT; // TODO high risk point
   } else {
     return waypoint;
   }

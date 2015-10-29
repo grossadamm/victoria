@@ -19,13 +19,13 @@ Pilot::Pilot(Navigation *nav, Sensors *sensors, Communications* comms)
 
 void Pilot::run()
 {
-  manageLights();
-
-  manageComms();
-
   if (driveInterrupts()) {
     _drive->off();
   }
+
+  manageLights();
+
+  manageComms();
 
   drive();
 
@@ -45,10 +45,14 @@ void Pilot::manageLights() {
 
 void Pilot::manageComms() {
   if(_comms->needToCommunicate()) {
-    Serial.println("Need to communicate");
     byte message[50];
     _comms->buildMessage(message);
+    boolean wasOn = _drive->isOn();
+    _drive->off();
     _comms->sendMessage(message);
+    if(wasOn) {
+      _drive->on();
+    }
   }
 }
 
