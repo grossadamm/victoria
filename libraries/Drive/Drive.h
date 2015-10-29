@@ -23,6 +23,9 @@ class Drive
     boolean _useMainDrive;
     boolean _useRudder;
     boolean _useSecondaryDrive;
+    int _mainDrive;
+    int _leftDrive;
+    int _rightDrive;
     Servo _directionServo;
 };
 
