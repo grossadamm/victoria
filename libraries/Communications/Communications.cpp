@@ -5,6 +5,7 @@
 #include "EEPROM.h"
 
 const PROGMEM int DAY_LAST_COMMUNICATED_POSITION = 1;
+const PROGMEM int GPS_COMMS_MOSFET = 24;
 
 Communications::Communications(Navigation *nav, Sensors *sensors)
 {
@@ -52,6 +53,10 @@ boolean Communications::sendMessage(byte message[50]){
   Serial.println("sending!");
   lastCommunicatedOn(day());
   return true;  
+}
+
+void Communications::receiveMessage() {
+  Serial.println("receiving!"); // mailbox check costs a credit
 }
 
 void Communications::applyTemperatures(byte message[50]) {
