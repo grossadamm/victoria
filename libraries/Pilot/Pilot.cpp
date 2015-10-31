@@ -30,7 +30,7 @@ void Pilot::run()
   drive();
 
   if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
-    smartSleep(10);
+    // smartSleep(10);
   }
 }
 
@@ -109,21 +109,23 @@ boolean Pilot::waitForNav() {
     _drive->off(); // TODO high risk point
   }
 
-  while(!_nav->ready() && attempts < 3){
+  while(!_nav->ready()){ // TODO high risk point
     Serial.println("Waiting for nav to be ready...");
-    while(_sensors->timeout(futureTime, 45) && !_nav->ready()){ // attempt for 45 seconds
-      _nav->ready(); // to make nav ready
+    delay(100);
+    futureTime = 0;
+    while(!_sensors->timeout(futureTime, 45) && !_nav->ready()){ // attempt for 45 seconds
+      delay(100);
     }
     if(!_nav->ready()) { // if still not good, wait 10 minutes
       Serial.println("Nav failed after 45 seconds, sleeping");
+      delay(100);
       smartSleep(10);
       attempts++;
     }
-  } // try that three times
-
-  if(!_nav->ready()) {
-    return false; // TODO high risk point
+    if(_nav->ready())
+      Serial.println("Nav now ready!");
   }
+
   return true;
 }
 

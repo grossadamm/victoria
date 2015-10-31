@@ -5,6 +5,10 @@
 #include "avr/pgmspace.h"
 #include "TinyGPS++.h"
 #include "SoftwareSerial.h"
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_HMC5883_U.h>
+#include <AP_Declination.h>
 
 const PROGMEM Waypoint MEMORY_VALIDATING_WAYPOINT = {123.0, 456.1, 20};
 const PROGMEM Waypoint CHECKSUM_FAILED_WAYPOINT  = {999.99, 999.99, 255};
@@ -12,31 +16,34 @@ const PROGMEM int WAYPOINT_SIZE = 11;
 const PROGMEM int MAX_WAYPOINTS = 362;
 const PROGMEM int WAYPOINT_STORAGE_OFFSET = 2;
 const PROGMEM int WAYPOINT_COUNT_POSITION = 1;
+const PROGMEM float RADIANS = 0.0174532;
 
 const PROGMEM int GPS_MOSFET = 24;
 
-static const int RXPin = 15, TXPin = 14;
-static const uint32_t GPSBaud = 4800;
+static const uint32_t GPSBaud = 9600;
 
 // The serial connection to the GPS device
-SoftwareSerial ss(RXPin, TXPin);
 
 Navigation::Navigation(Sensors* sensors)
 {
   _sensors = sensors;
-  ss.begin(GPSBaud);
+  Serial1.begin(GPSBaud);
   validateEeprom(); // TODO what good is this?
   _currentWaypoint = retrieveWaypoint(1);
+  _mag = Adafruit_HMC5883_Unified(12345);
 }
 
 boolean Navigation::ready()
 {
   digitalWrite(GPS_MOSFET, HIGH);
-  while (ss.available() > 0) // read gps data if available
-    _gps.encode(ss.read());
+   _mag.begin();
+  while (Serial1.available() > 0) // read gps data if available
+    _gps.encode(Serial1.read());
 
-  if(_gps.location.isValid()) // current data?
+  if(_gps.location.isValid()){
+    _currentDeclination = AP_Declination::get_declination(_gps.location.lat(),  _gps.location.lng()) * RADIANS;
     return true;
+  }
 
   return false;
 }
@@ -155,7 +162,7 @@ int Navigation::courseChangeNeeded()
 
   // get current course
   // get desired course
-  double currentCourse = _gps.course.deg();
+  double currentCourse = currentHeading();
   double desiredCourse = TinyGPSPlus::courseTo(
       _gps.location.lat(),
       _gps.location.lng(),
@@ -194,4 +201,31 @@ boolean Navigation::validateEeprom() {
   }
 
   return true;
+}
+
+float Navigation::currentHeading() {
+  sensors_event_t event; 
+  _mag.getEvent(&event);
+
+  // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  float heading = atan2(event.magnetic.y, event.magnetic.x);
+  
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  heading += _currentDeclination;
+  
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI; 
+  return headingDegrees;
 }

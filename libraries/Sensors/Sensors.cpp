@@ -67,7 +67,6 @@ boolean Sensors::timeout(time_t& futureTime, int seconds) {
   if(futureTime == 0) {
     futureTime = now() + seconds;
   } 
-
   if (now() > futureTime) {
     return true;
   } else {
@@ -76,5 +75,5 @@ boolean Sensors::timeout(time_t& futureTime, int seconds) {
 }
 
 BatteryState Sensors::batteryState() {
-  return draining;
+  return floating;
 }

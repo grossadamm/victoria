@@ -100,7 +100,6 @@ void Drive::turnRudder(int leftRightCenter) {
   rudderTurn += 90;
   // set rudder
   _directionServo.write(rudderTurn);
-
   // TODO watch servo for stall
 }
 

@@ -22,6 +22,9 @@
 #include <EEPROMAnything.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
+#include <AP_Declination.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_HMC5883_U.h>
 
 // Sleep
 #include <LowPower.h>
@@ -76,6 +79,8 @@ void loop()
 {
   time = millis();
   pilot->run();
-  Serial.println(millis() - time);
+  unsigned long diff = millis() - time;
+  if(diff>10)
+    Serial.println("Took too long to run this loop!");
 }
 

@@ -1,5 +1,9 @@
+#include <Wire.h>
+
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
+
+#define address 0x1E //0011110b, I2C 7bit address of HMC5883
 /*
    This sample sketch demonstrates the normal use of a TinyGPS++ (TinyGPSPlus) object.
    It requires the use of SoftwareSerial, and assumes that you have a
@@ -8,16 +12,17 @@
 static const int RXPin = 15, TXPin = 14;
 static const uint32_t GPSBaud = 9600;
 
+
 // The TinyGPS++ object
 TinyGPSPlus gps;
 
 // The serial connection to the GPS device
-SoftwareSerial ss(RXPin, TXPin);
+//SoftwareSerial ss(RXPin, TXPin);
 
 void setup()
 {
   Serial.begin(115200);
-  ss.begin(GPSBaud);
+  Serial1.begin(GPSBaud);
 
   Serial.println(F("DeviceExample.ino"));
   Serial.println(F("A simple demonstration of TinyGPS++ with an attached GPS module"));
@@ -29,11 +34,11 @@ void setup()
 void loop()
 {
   // This sketch displays information every time a new sentence is correctly encoded.
-  while (ss.available() > 0)
-    if (gps.encode(ss.read()))
+  while (Serial1.available() > 0)
+    if (gps.encode(Serial1.read()))
       displayInfo();
 
-  if (millis() > 120000 && gps.charsProcessed() < 10)
+  if (millis() > 12000 && gps.charsProcessed() < 10)
   {
     Serial.println(F("No GPS detected: check wiring."));
     while(true);

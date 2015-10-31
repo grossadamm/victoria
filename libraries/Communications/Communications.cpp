@@ -55,9 +55,9 @@ boolean Communications::sendMessage(byte message[50]){
   return true;  
 }
 
-void Communications::receiveMessage() {
-  Serial.println("receiving!"); // mailbox check costs a credit
-}
+// void Communications::receiveMessage() {
+//   Serial.println("receiving!"); // mailbox check costs a credit
+// }
 
 void Communications::applyTemperatures(byte message[50]) {
   Temperatures temps = _sensors->retrieveTemperatures();

@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "TinyGPS++.h"
 #include "Sensors.h"
+#include <Adafruit_HMC5883_U.h>
 
 struct Waypoint ; /* Forward declaration */
 
@@ -27,6 +28,7 @@ class Navigation
     void storeWaypoint(const Waypoint& waypoint, int waypointIndex);
     Waypoint retrieveWaypoint(int waypointIndex);
     int courseChangeNeeded();
+    float currentHeading();
   private:
     boolean validateWaypoint(Waypoint waypoint);
     boolean compareWaypoints(Waypoint wp1, Waypoint wp2);
@@ -39,6 +41,8 @@ class Navigation
     Sensors* _sensors;
     int _numberOfWaypoints;
     Waypoint _currentWaypoint;
+    Adafruit_HMC5883_Unified _mag;
+    float _currentDeclination;
 };
 
 
