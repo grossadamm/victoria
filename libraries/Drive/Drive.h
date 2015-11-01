@@ -3,30 +3,28 @@
 
 #include "Arduino.h"
 #include "Navigation.h"
-#include "Servo.h"
+#include "BaseMotorControl.h"
+#include "Rudder.h"
 
-class Drive
+class Drive: public BaseMotorControl
 {
   public:
     Drive();
     void on();
     void off();
     void attemptClear();
-    boolean isOn();
-    boolean isOff();
     void direction(int leftRightCenter);
     void currentExceeded();
   private:
     void turnRudder(int leftRightCenter);
     void turnSecondaryDrive(int leftRightCenter);
-    boolean _on;
     boolean _useMainDrive;
     boolean _useRudder;
     boolean _useSecondaryDrive;
     int _mainDrive;
     int _leftDrive;
     int _rightDrive;
-    Servo _directionServo;
+    Rudder* _rudder;
 };
 
 #endif

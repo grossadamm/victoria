@@ -2,6 +2,7 @@
 #include <Servo.h>
 #include <Drive.h>
 #include <Pilot.h>
+#include <RunningAverage.h>
 
 // Sensors
 #include <Sensors.h>
@@ -71,7 +72,7 @@ void setup()
   Serial.println("Comms initialized");
   pilot = new Pilot(nav, sensors, comms);
   Serial.println("Pilot initialized");
-  delay(100);
+  delay(100); 
 }
 
 unsigned long time;
