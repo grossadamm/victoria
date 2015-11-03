@@ -13,6 +13,7 @@ class Rudder: public BaseMotorControl
     Rudder();
     void attemptClear();
     void set(int leftRightCenter);
+    virtual void speed(int percent);
   private:
     RunningAverage* _rudderSets;
     int _currentRudderPosition;

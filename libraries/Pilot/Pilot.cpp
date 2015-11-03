@@ -15,6 +15,7 @@ Pilot::Pilot(Navigation *nav, Sensors *sensors, Communications* comms)
   _sensors = sensors;
   _comms = comms;
   _drive = new Drive();
+  _manualControl = false;
 }
 
 void Pilot::run()
@@ -27,10 +28,15 @@ void Pilot::run()
 
   manageComms();
 
+  if(_manualControl) {
+    manual();
+    return;
+  }
+
   drive();
 
   if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
-    // smartSleep(10);
+    smartSleep(10);
   }
 }
 
@@ -55,6 +61,12 @@ void Pilot::manageComms() {
       _drive->on();
     }
   }
+}
+
+void Pilot::manual() {
+  ManualControlData input = _comms->readControlData();
+  _drive->direction(input.leftRightCenter);
+  _drive->speed(input.forwardReverse);
 }
 
 boolean Pilot::driveInterrupts() {

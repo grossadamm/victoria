@@ -24,6 +24,10 @@ void BaseMotorControl::on()
   _on = true;
 }
 
+int BaseMotorControl::speed() {
+  return _currentSpeed;
+}
+
 void BaseMotorControl::attemptClear()
 {
   // run reverse

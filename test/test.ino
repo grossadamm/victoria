@@ -56,7 +56,7 @@ void displayInfo()
   }
   else
   {
-    Serial.print(F("INVALID"));
+    Serial.println(gps.satellites.value());
   }
 
   Serial.print(F("  Date/Time: "));

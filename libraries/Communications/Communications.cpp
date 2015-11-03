@@ -3,6 +3,8 @@
 #include "Wire.h"
 #include "DS1307RTC.h"
 #include "EEPROM.h"
+#include "Message.h"
+#include "ControlMessage.h"
 
 const PROGMEM int DAY_LAST_COMMUNICATED_POSITION = 1;
 const PROGMEM int GPS_COMMS_MOSFET = 24;
@@ -11,33 +13,21 @@ Communications::Communications(Navigation *nav, Sensors *sensors)
 {
   _nav = nav;
   _sensors = sensors;
+  _rfEnabled = true;
+  _radio = new RF24(8, 9);
+  _lastControlData = {0, 0}; // zero speed and zero rudder turn
   setSyncProvider(RTC.get); 
 }
 
 void Communications::buildMessage(byte message[50])
 {
   Serial.println("Building the message");
-  
-  applyTemperatures(message);
-  message[4] = '|';
-
-  int lighteningCount = 5;
-  message[5] = (byte) lighteningCount;
-  message[6] = '|';
-
-  int attemptsBeforeComm = 0;
-  message[7] = (byte) attemptsBeforeComm;
-  message[8] = '|';
-
-  applyCoordinates(message);
-  message[17] = '|';
-
-  Serial.println("Message follows:");
-  for(int i=0; i<17; i++){
-    Serial.print(message[i]);
-  }
-  Serial.print('\n');
-  Serial.println("------");
+  Message* msg = new Message(message);
+  msg->applyTemperatures(_sensors->retrieveTemperatures());
+  msg->applyLightening(5);
+  msg->applyAttempts(0);
+  msg->applyCoordinates(33.333, 123.123);
+  msg->print();
 }
 
 boolean Communications::needToCommunicate()
@@ -59,50 +49,26 @@ boolean Communications::sendMessage(byte message[50]){
 //   Serial.println("receiving!"); // mailbox check costs a credit
 // }
 
-void Communications::applyTemperatures(byte message[50]) {
-  Temperatures temps = _sensors->retrieveTemperatures();
-  int waterTemperature = ((int)temps.water) - 75;
-  signed char waterTemperature_sc = (signed char) waterTemperature;
-  byte waterTemperature_b = (byte) waterTemperature_sc;
-  
-  message[0] = waterTemperature_b;
-  message[1] = waterTemperature_b;
-  message[2] = waterTemperature_b;
-  message[3] = waterTemperature_b;
-}
-
-union FloatToByte
-{
- float number;
- uint8_t bytes[4];
-};
-
-void Communications::applyCoordinates(byte message[50]) {
-  float lat = -99.521654;
-  union FloatToByte latitude;
-  latitude.number = lat;
-  
-  int startingPoint = 9;
-  for(int i = startingPoint; i < startingPoint + 4; i++) {
-    int index = i-startingPoint;
-    message[i] = latitude.bytes[index];
-  }
-
-  float longi = 42.915512;
-  union FloatToByte longitude;
-  longitude.number = longi;
-
-  startingPoint = startingPoint + 4;
-  for(int i = startingPoint; i < startingPoint + 4; i++) {
-    int index = i-startingPoint;
-    message[i] = longitude.bytes[index];
-  }
-}
-
 boolean Communications::communicatedToday() {
   return ((int) EEPROM.read(DAY_LAST_COMMUNICATED_POSITION)) == day();
 }
 
 void Communications::lastCommunicatedOn(int day) {
   EEPROM.write(DAY_LAST_COMMUNICATED_POSITION, day);
+}
+
+ManualControlData Communications::readControlData() {
+  byte buffer[32];
+  bool newData = false;
+
+  if(_radio->available()){
+    _radio->read(&buffer,32);
+    newData = true;
+  }
+
+  if(newData) {
+    ControlMessage* control = new ControlMessage(buffer);
+    _lastControlData = control->getCommand();
+  }
+  return _lastControlData;
 }

@@ -89,3 +89,7 @@ void Drive::turnSecondaryDrive(int leftRightCenter) {
     _leftDrive = minPower;
   }
 }
+
+void Drive::speed(int percent) {
+  // TODO do nothing for now
+}

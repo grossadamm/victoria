@@ -15,6 +15,7 @@ class Drive: public BaseMotorControl
     void attemptClear();
     void direction(int leftRightCenter);
     void currentExceeded();
+    virtual void speed(int percent);
   private:
     void turnRudder(int leftRightCenter);
     void turnSecondaryDrive(int leftRightCenter);

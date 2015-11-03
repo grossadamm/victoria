@@ -34,9 +34,9 @@ void Rudder::set(int leftRightCenter) {
   _rudderSets->addValue(rudderTurn);
   int averagePosition = _rudderSets->getAverage();
 
-  // set if needed
+  // set only if the running average is not within 1 degree of the current position
   _currentRudderPosition = _directionServo.read();
-  if(averagePosition != _currentRudderPosition) {
+  if(averagePosition > _currentRudderPosition + 1 || averagePosition < _currentRudderPosition - 1) {
     Serial.print("Adjusting rudder to: "); Serial.println(averagePosition);
     on();
     _directionServo.write(rudderTurn);
@@ -44,4 +44,8 @@ void Rudder::set(int leftRightCenter) {
     off();
   }
   // TODO watch servo for stall
+}
+
+void Rudder::speed(int percent) {
+  // TODO do nothing for now
 }

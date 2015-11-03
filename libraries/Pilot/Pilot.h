@@ -17,6 +17,7 @@ class Pilot
     void drive();
     void manageLights();
     void manageComms();
+    void manual();
     void smartSleep(int minutes);
     void setCourse();
     boolean waitForNav();
@@ -25,6 +26,7 @@ class Pilot
     Communications* _comms;
     Drive* _drive;
     int secondsSlept;
+    boolean _manualControl;
 };
 
 #endif
