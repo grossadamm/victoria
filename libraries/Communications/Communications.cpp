@@ -58,7 +58,7 @@ void Communications::lastCommunicatedOn(int day) {
 }
 
 ManualControlData Communications::readControlData() {
-  byte buffer[32];
+  char buffer[32];
   bool newData = false;
 
   if(_radio->available()){
@@ -68,7 +68,7 @@ ManualControlData Communications::readControlData() {
 
   if(newData) {
     ControlMessage* control = new ControlMessage(buffer);
-    _lastControlData = control->getCommand();
+    // _lastControlData = control->getCommand();
   }
   return _lastControlData;
 }

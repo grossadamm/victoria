@@ -4,13 +4,22 @@
 #include "Arduino.h"
 #include "Communications.h"
 
+struct Command; /* Forward declaration */
+
+typedef struct Command
+{
+  char command;
+  char* data;
+} Command;
+
 class ControlMessage
 {
   public:
-    ControlMessage(byte message[32]);
-    ManualControlData getCommand();
+    ControlMessage(char message[32]);
+    Command getCommand();
+    bool commandsAvailable();
   private:
-    byte* _message;
+    char* _message;
 };
 
 #endif

@@ -10,6 +10,7 @@ class Message
     Message(byte message[50]);
     void applyCoordinates(float lat, float longi);
     void applyTemperatures(Temperatures temps);
+    Temperatures readTemperatures();
     void applyLightening(int count);
     void applyAttempts(int count);
     void print();

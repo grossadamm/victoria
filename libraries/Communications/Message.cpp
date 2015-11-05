@@ -43,6 +43,12 @@ void Message::applyTemperatures(Temperatures temps) {
   _message[3] = waterTemperature_b;
 }
 
+Temperatures Message::readTemperatures() {
+  signed char temp_sc = (signed char) _message[0];
+  int temp = (int)temp_sc + 75;
+  Temperatures temps = {temp, temp, temp, temp};
+}
+
 void Message::applyLightening(int lighteningCount) {
   _message[5] = (byte) lighteningCount;
 }
