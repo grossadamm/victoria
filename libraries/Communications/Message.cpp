@@ -31,30 +31,76 @@ void Message::applyCoordinates(float lat, float longi) {
   }
 }
 
+float Message::readLatitude() {
+  union FloatToByte latitude;
+
+  int startingPoint = 9;
+  for(int i = startingPoint; i < startingPoint + 4; i++) {
+    int index = i-startingPoint;
+    latitude.bytes[index] = _message[i];
+  }
+
+  return latitude.number;
+}
+
+float Message::readLongitude() {
+  union FloatToByte longitude;
+
+  int startingPoint = 13;
+  for(int i = startingPoint; i < startingPoint + 4; i++) {
+    int index = i-startingPoint;
+    longitude.bytes[index] = _message[i];
+  }
+
+  return longitude.number;
+}
 
 void Message::applyTemperatures(Temperatures temps) {
-  int waterTemperature = ((int)temps.water) - 75;
-  signed char waterTemperature_sc = (signed char) waterTemperature;
-  byte waterTemperature_b = (byte) waterTemperature_sc;
-  
-  _message[0] = waterTemperature_b;
-  _message[1] = waterTemperature_b;
-  _message[2] = waterTemperature_b;
-  _message[3] = waterTemperature_b;
+  int temperature = ((int)temps.water) - 75;
+  signed char temperature_sc = (signed char) temperature;
+  byte temperature_b = (byte) temperature_sc; 
+  _message[0] = temperature_b;
+
+  temperature = ((int)temps.air) - 75;
+  temperature_sc = (signed char) temperature;
+  temperature_b = (byte) temperature_sc; 
+  _message[1] = temperature_b;
+
+  temperature = ((int)temps.internal) - 75;
+  temperature_sc = (signed char) temperature;
+  temperature_b = (byte) temperature_sc; 
+  _message[2] = temperature_b;
+
+  temperature = ((int)temps.battery) - 75;
+  temperature_sc = (signed char) temperature;
+  temperature_b = (byte) temperature_sc; 
+  _message[3] = temperature_b;
 }
 
 Temperatures Message::readTemperatures() {
-  signed char temp_sc = (signed char) _message[0];
-  int temp = (int)temp_sc + 75;
-  Temperatures temps = {temp, temp, temp, temp};
+  Temperatures temps = {
+    (int)((signed char) _message[0]) + 75,
+    (int)((signed char) _message[1]) + 75,
+    (int)((signed char) _message[2]) + 75,
+    (int)((signed char) _message[3]) + 75
+  };
+  return temps;
 }
 
 void Message::applyLightening(int lighteningCount) {
   _message[5] = (byte) lighteningCount;
 }
 
+int Message::readLightening() {
+  return (int)_message[5];
+}
+
 void Message::applyAttempts(int attemptsBeforeComm) {
   _message[7] = (byte) attemptsBeforeComm;
+}
+
+int Message::readAttempts() {
+  return (int) _message[7];
 }
 
 void Message::print() {
