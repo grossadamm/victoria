@@ -3,7 +3,6 @@
 
 #include "Arduino.h"
 #include "Navigation.h"
-#include "BaseMotorControl.h"
 #include "Rudder.h"
 
 class Drive

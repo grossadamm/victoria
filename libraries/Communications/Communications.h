@@ -17,7 +17,7 @@ typedef struct ManualControlData
 class Communications
 {
   public:
-    Communications(Navigation* nav, Sensors* sensors);
+    Communications(Navigation* nav, Sensors* sensors, Power* power);
     void buildMessage(byte message[50]);
     boolean needToCommunicate();
     boolean sendMessage(byte message[50]);
@@ -29,6 +29,7 @@ class Communications
     void lastCommunicatedOn(int day);
     Navigation* _nav;
     Sensors* _sensors;
+    Power* _power;
     bool _rfEnabled;
     RF24* _radio;
     ManualControlData _lastControlData;

@@ -2,7 +2,6 @@
 #define Rudder_h
 
 #include "Arduino.h"
-#include "Navigation.h"
 #include "Power.h"
 #include "RunningAverage.h"
 #include "Encoder.h"
@@ -15,7 +14,7 @@ class Rudder
     void set(int leftRightCenter);
     int calculateRequiredPosition(int leftRightCenter);
     int position();
-    virtual void speed(int percent);
+    void speed(int percent);
     void on();
     void off();
     boolean isOn();

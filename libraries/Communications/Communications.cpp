@@ -7,12 +7,12 @@
 #include "ControlMessage.h"
 
 const PROGMEM int DAY_LAST_COMMUNICATED_POSITION = 1;
-const PROGMEM int GPS_COMMS_MOSFET = 24;
 
-Communications::Communications(Navigation *nav, Sensors *sensors)
+Communications::Communications(Navigation *nav, Sensors *sensors, Power* power)
 {
   _nav = nav;
   _sensors = sensors;
+  _power = power;
   _rfEnabled = true;
   _radio = new RF24(8, 9);
   _lastControlData = {0, 0}; // zero speed and zero rudder turn
@@ -41,7 +41,9 @@ boolean Communications::needToCommunicate()
 
 boolean Communications::sendMessage(byte message[50]){
   Serial.println("sending!");
+  _power->gpsComms(true);
   lastCommunicatedOn(day());
+  _power->gpsComms(false);
   return true;  
 }
 

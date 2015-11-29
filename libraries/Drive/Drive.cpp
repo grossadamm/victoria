@@ -1,9 +1,6 @@
 #include "Drive.h"
 #include "Rudder.h"
 
-const PROGMEM int MAIN_DRIVE_MOSFET = 31;
-const PROGMEM int SECONDARY_DRIVE_MOSFET = 32;
-
 const PROGMEM int MAIN_DRIVE_MIN_POWER = 20;
 const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
@@ -20,8 +17,8 @@ Drive::Drive(Power* power)
 void Drive::off()
 {
   _rudder->off();
-  digitalWrite(MAIN_DRIVE_MOSFET, LOW);
-  digitalWrite(SECONDARY_DRIVE_MOSFET, LOW);
+  _power->mainDrive(false);
+  _power->secondaryDrive(false);
   _on = false;
 }
 
@@ -32,11 +29,11 @@ void Drive::on()
     if(_useRudder)
       _rudder->on();
     if(_useMainDrive){
-      digitalWrite(MAIN_DRIVE_MOSFET, HIGH);
+      _power->mainDrive(true);
       _mainDrive = MAIN_DRIVE_MIN_POWER;
     }
     if(_useSecondaryDrive){
-      digitalWrite(SECONDARY_DRIVE_MOSFET, HIGH);
+      _power->secondaryDrive(true);
       _leftDrive = SECONDARY_DRIVE_MIN_POWER;
       _rightDrive = SECONDARY_DRIVE_MIN_POWER;
     }

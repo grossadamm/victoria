@@ -7,7 +7,6 @@
 #include "DS1307RTC.h"
 
 #define ONE_WIRE_BUS 2
-#define TEMP_MOSFET 22
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature temperatureSensors(&oneWire);
@@ -23,7 +22,7 @@ Temperatures Sensors::retrieveTemperatures()
 {
   float fahrenheit = -180;
   time_t futureTime = 0;
-  digitalWrite(TEMP_MOSFET, HIGH); // power on the temp sensors
+  _power->temps(true);
 
   while((fahrenheit < -100 || fahrenheit > 170) && !timeout(futureTime, 3)) { // attempt for a second to retrieve temps
     temperatureSensors.requestTemperatures();
@@ -31,7 +30,7 @@ Temperatures Sensors::retrieveTemperatures()
   }
   Temperatures temps = {fahrenheit, 0, 0, 0};
 
-  digitalWrite(TEMP_MOSFET, LOW); // turn them back off
+  _power->temps(false);
   return temps;
 }
 

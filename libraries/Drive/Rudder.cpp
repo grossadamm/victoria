@@ -1,5 +1,4 @@
 #include "Rudder.h"
-#include "RunningAverage.h"
 
 const PROGMEM int MAX_RUDDER_TURN_DEGREES = 30;
 const PROGMEM int SPEED_SET_PIN = 3;

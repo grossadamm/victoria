@@ -13,7 +13,7 @@ Pilot::Pilot()
   _power = new Power();
   _sensors = new Sensors(_power);
   _nav = new Navigation(_sensors, _storage, _power);
-  _comms = new Communications(_nav, _sensors);
+  _comms = new Communications(_nav, _sensors, _power);
   _drive = new Drive(_power);
   _manualControl = false;
 }
