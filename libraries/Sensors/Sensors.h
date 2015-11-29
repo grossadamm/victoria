@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "OneWire.h"
+#include "Power.h"
 #include "DallasTemperature.h"
 
 #include "Time.h"
@@ -29,7 +30,7 @@ enum BatteryState
 class Sensors
 {
   public:
-    Sensors();
+    Sensors(Power* power);
     Temperatures retrieveTemperatures();
     boolean night();
     boolean day();
@@ -40,6 +41,7 @@ class Sensors
     boolean timeout(time_t& futureTime, int seconds);
     BatteryState batteryState();
   private:
+    Power* _power;
     int _one_wire_bus;
     int _when_times_out;
 };

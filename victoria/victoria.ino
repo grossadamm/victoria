@@ -1,5 +1,5 @@
 // Pilot
-#include <Servo.h>
+#include <Power.h>
 #include <Drive.h>
 #include <Pilot.h>
 #include <RunningAverage.h>
@@ -24,13 +24,14 @@
 
 // Navigation
 #include <Navigation.h>
+#include <Storage.h>
 #include <EEPROM.h>
 #include <EEPROMAnything.h>
-#include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 #include <AP_Declination.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
+#include <Encoder.h>
 
 // Sleep
 #include <LowPower.h>

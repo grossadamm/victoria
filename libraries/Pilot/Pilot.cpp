@@ -7,14 +7,14 @@
 
 #include "Time.h"
 
-#define RTC_MOSFET 23
-
-Pilot::Pilot(Navigation *nav, Sensors *sensors, Communications* comms)
+Pilot::Pilot()
 {
-  _nav = nav;
-  _sensors = sensors;
-  _comms = comms;
-  _drive = new Drive();
+  _storage = new Storage();
+  _power = new Power();
+  _sensors = new Sensors(_power);
+  _nav = new Navigation(_sensors, _storage, _power);
+  _comms = new Communications(_nav, _sensors);
+  _drive = new Drive(_power);
   _manualControl = false;
 }
 
@@ -92,9 +92,9 @@ void Pilot::smartSleep(int minutes) {
     // set sleep mode
     // sleep for 8 seconds at a time until minutes reached
     // power up rtc
-    digitalWrite(RTC_MOSFET, LOW);
+    _power->rtc(false);
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); 
-    digitalWrite(RTC_MOSFET, HIGH);
+    _power->rtc(true);
     secondsSlept = secondsSlept + 8;
   }
 }

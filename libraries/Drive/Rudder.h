@@ -3,21 +3,31 @@
 
 #include "Arduino.h"
 #include "Navigation.h"
-#include "Servo.h"
-#include "BaseMotorControl.h"
+#include "Power.h"
 #include "RunningAverage.h"
+#include "Encoder.h"
 
-class Rudder: public BaseMotorControl
+class Rudder
 {
   public:
-    Rudder();
+    Rudder(Power* power);
     void attemptClear();
     void set(int leftRightCenter);
+    int calculateRequiredPosition(int leftRightCenter);
+    int position();
     virtual void speed(int percent);
+    void on();
+    void off();
+    boolean isOn();
+    boolean isOff();
   private:
+    boolean _on;
+    int _startCounts;
+    void setStartPosition();
     RunningAverage* _rudderSets;
     int _currentRudderPosition;
-    Servo _directionServo;
+    Encoder* _encoder;
+    Power* _power;
 };
 
 #endif

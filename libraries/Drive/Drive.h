@@ -6,16 +6,18 @@
 #include "BaseMotorControl.h"
 #include "Rudder.h"
 
-class Drive: public BaseMotorControl
+class Drive
 {
   public:
-    Drive();
+    Drive(Power* power);
     void on();
     void off();
     void attemptClear();
     void direction(int leftRightCenter);
     void currentExceeded();
-    virtual void speed(int percent);
+    boolean isOn();
+    boolean isOff();
+    void speed(int percent);
   private:
     void turnRudder(int leftRightCenter);
     void turnSecondaryDrive(int leftRightCenter);
@@ -26,6 +28,8 @@ class Drive: public BaseMotorControl
     int _leftDrive;
     int _rightDrive;
     Rudder* _rudder;
+    Power* _power;
+    boolean _on;
 };
 
 #endif

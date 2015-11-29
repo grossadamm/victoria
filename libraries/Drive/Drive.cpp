@@ -7,13 +7,14 @@ const PROGMEM int SECONDARY_DRIVE_MOSFET = 32;
 const PROGMEM int MAIN_DRIVE_MIN_POWER = 20;
 const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
-Drive::Drive() : BaseMotorControl(99,99)
+Drive::Drive(Power* power)
 {
   _on = false;
+  _power = power;
   _useMainDrive = true;
   _useRudder = true;
   _useSecondaryDrive = false;
-  _rudder = new Rudder();
+  _rudder = new Rudder(power);
 }
 
 void Drive::off()
@@ -42,6 +43,14 @@ void Drive::on()
   }
   // turn on
   _on = true;
+}
+
+boolean Drive::isOn() {
+  return _on;
+}
+
+boolean Drive::isOff() {
+  return !_on;
 }
 
 void Drive::attemptClear()

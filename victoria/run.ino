@@ -1,6 +1,3 @@
-Navigation* nav;
-Sensors* sensors;
-Communications* comms;
 Pilot* pilot;
 
 boolean DRIVING = true;
@@ -12,11 +9,22 @@ boolean STATE = false;
 // BYTE 1: NUMBER OF WAYPOINTS STORED
 // ONWARDS: WAYPOINTS
 
+// RUDDER REVOLUTION ENCODER COUNTS 126000
 
 // PIN USAGE:
-// 2: ONE WIRE
-// 15: GPS
+// A0: VOLTAGE FROM RUDDER - SHIELD
+// A1: SHIELD RESERVED
+// 2:  ONE WIRE
+// 3:  RUDDER PWM - SHIELD
+// 8:  SHIELD RESERVED
+// 9:  BRAKE RUDDER - SHIELD
+// 11: SHIELD RESERVED
+// 12: FORWARD RUDDER - SHIELD
+// 13: SHIELD RESERVED
 // 14: GPS
+// 15: GPS
+// 18: RUDDER ENCODER
+// 19: RUDDER ENCODER
 // 20: RTC
 // 21: RTC
 // 22: TEMP MOSFET
@@ -28,29 +36,22 @@ boolean STATE = false;
 // 28: PHOTORESISTOR MOSFET
 // 29: ROTATION MOSFET
 // 30: DIRECTION_SERVO_PIN
-
-//void setup()
-//{
-//  Serial.begin(9600);
-//  sensors = new Sensors();
-//  Serial.println("Sensors initialized");
-//  nav = new Navigation(sensors);
-//  Serial.println("Navigation initialized");
-//  comms = new Communications(nav, sensors);
-//  Serial.println("Comms initialized");
-//  pilot = new Pilot(nav, sensors, comms);
-//  Serial.println("Pilot initialized");
-//  delay(100); 
-//}
+void setup()
+{
+  Serial.begin(9600);
+  pilot = new Pilot();
+  Serial.println("Pilot initialized");
+  delay(100); 
+}
 
 unsigned long time;
-//void loop()
-//{
-//  time = millis();
-//  pilot->run();
-//  unsigned long diff = millis() - time;
-//  if(diff>10)
-//    Serial.println("Took too long to run this loop!");
-//}
+void loop()
+{
+  time = millis();
+  pilot->run();
+  unsigned long diff = millis() - time;
+  if(diff>10)
+    Serial.println("Took too long to run this loop!");
+}
 
 

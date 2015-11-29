@@ -13,8 +13,9 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature temperatureSensors(&oneWire);
 DeviceAddress _thermometer = {0x28, 0xCD, 0x90, 0x29, 0x07, 0x00, 0x00, 0xE5};
 
-Sensors::Sensors()
+Sensors::Sensors(Power* power)
 {
+  _power = power;
   _when_times_out = 0;
 }
 

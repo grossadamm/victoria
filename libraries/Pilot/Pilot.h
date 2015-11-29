@@ -10,7 +10,7 @@
 class Pilot
 {
   public:
-    Pilot(Navigation* nav, Sensors* sensors, Communications* comms);
+    Pilot();
     void run();
   private:
     boolean driveInterrupts();
@@ -25,6 +25,8 @@ class Pilot
     Sensors* _sensors;
     Communications* _comms;
     Drive* _drive;
+    Storage* _storage;
+    Power* _power;
     int secondsSlept;
     boolean _manualControl;
 };

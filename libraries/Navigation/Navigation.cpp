@@ -1,41 +1,40 @@
 // #include "Arduino.h"
 #include "Navigation.h"
-#include "EEPROM.h"
-#include "EEPROMAnything.h"
-#include "avr/pgmspace.h"
 #include "TinyGPS++.h"
-#include "SoftwareSerial.h"
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_HMC5883_U.h>
 #include <AP_Declination.h>
 
-const PROGMEM Waypoint MEMORY_VALIDATING_WAYPOINT = {123.0, 456.1, 20};
 const PROGMEM Waypoint CHECKSUM_FAILED_WAYPOINT  = {999.99, 999.99, 255};
-const PROGMEM int WAYPOINT_SIZE = 11;
-const PROGMEM int MAX_WAYPOINTS = 362;
-const PROGMEM int WAYPOINT_STORAGE_OFFSET = 2;
-const PROGMEM int WAYPOINT_COUNT_POSITION = 1;
 const PROGMEM float RADIANS = 0.0174532;
-
-const PROGMEM int GPS_MOSFET = 24;
 
 static const uint32_t GPSBaud = 9600;
 
+const PROGMEM double FAKE_LAT = 51.5034070;
+const PROGMEM double FAKE_LONG =  -0.1275920;
+const PROGMEM float FAKE_HEADING =  90;
+
+// #define USE_FAKE_LOCATION 1
 // The serial connection to the GPS device
 
-Navigation::Navigation(Sensors* sensors)
+Navigation::Navigation(Sensors* sensors, Storage* storage, Power* power)
 {
   _sensors = sensors;
-  Serial1.begin(GPSBaud);
-  validateEeprom(); // TODO what good is this?
-  _currentWaypoint = retrieveWaypoint(1);
+  _storage = storage;
+  _power = power;
+  Serial3.begin(GPSBaud);
+  _currentWaypoint = _storage->RetrieveWaypoint(0);
   _mag = Adafruit_HMC5883_Unified(12345);
 }
 
 boolean Navigation::ready()
 {
-  digitalWrite(GPS_MOSFET, HIGH);
+  #if defined(USE_FAKE_LOCATION)
+    return true;
+  #endif
+
+  _power->gps(true);
    _mag.begin();
   while (Serial1.available() > 0) // read gps data if available
     _gps.encode(Serial1.read());
@@ -49,7 +48,6 @@ boolean Navigation::ready()
 }
 
 void Navigation::resetWaypoints() {
-  storeWaypoint(MEMORY_VALIDATING_WAYPOINT, 0);
   Waypoint waypoints[6];
   waypoints[0] = {37.3701, -122.4269, 20};
   waypoints[1] = {37.1004, -124.1135, 20};
@@ -57,86 +55,35 @@ void Navigation::resetWaypoints() {
   waypoints[3] = {25, -128, 70};
   waypoints[4] = {13, -172, 70};
 
-  _numberOfWaypoints = 1;
+  _storage->SetWaypointCount(0);
+  Waypoint waypoint;
   for(int i = 0; i < sizeof(waypoints); i++){
-    appendNewWaypoint(waypoints[i]);
+    waypoint = setWaypointChecksum(waypoints[i]);
+    _storage->AppendNewWaypoint(waypoint);
   }
 }
 
-void Navigation::storeWaypoint(Waypoint& waypoint, int position)
-{
+Waypoint Navigation::setWaypointChecksum(Waypoint waypoint){
   waypoint.checksum = 0;
   byte waypointChecksum = CRC8((byte *) &waypoint, sizeof(waypoint));
   waypoint.checksum = waypointChecksum;
-  
-  int usedBytes = EEPROM_writeAnything(waypointEepromPosition(position), waypoint);
-}
-
-byte Navigation::CRC8(const byte *data, byte len) {
-  byte crc = 0x00;
-  while (len--) {
-    byte extract = *data++;
-    for (byte tempI = 8; tempI; tempI--) {
-      byte sum = (crc ^ extract) & 0x01;
-      crc >>= 1;
-      if (sum) {
-        crc ^= 0x8C;
-      }
-      extract >>= 1;
-    }
-  }
-  return crc;
-}
-
-
-void Navigation::appendNewWaypoint(Waypoint& waypoint)
-{
-  EEPROM_writeAnything(waypointEepromPosition(_numberOfWaypoints), waypoint);
-  _numberOfWaypoints++;
-  EEPROM.write(WAYPOINT_COUNT_POSITION, _numberOfWaypoints);
-}
-
-void Navigation::storeWaypoint(const Waypoint& waypoint, int position)
-{
-  EEPROM_writeAnything(waypointEepromPosition(position), waypoint);
-}
-
-Waypoint Navigation::retrieveWaypoint(int waypointNumber)
-{
-  Waypoint waypoint;
-  EEPROM_readAnything(waypointEepromPosition(waypointNumber), waypoint);
-  if(!validateWaypoint(waypoint)) {
-    return CHECKSUM_FAILED_WAYPOINT; // TODO high risk point
-  } else {
-    return waypoint;
-  }
 }
 
 void Navigation::shiftWaypointsForward()
 {
-  for(int i = 1; i < _numberOfWaypoints; i++){
-    Navigation::storeWaypoint(Navigation::retrieveWaypoint(i), i-1);
+  int numberOfWaypoints = _storage->ReadWaypointCount();
+  for(int i = 1; i < numberOfWaypoints; i++){
+    _storage->StoreWaypoint(_storage->RetrieveWaypoint(i), i-1);
   }
-  _numberOfWaypoints--;
-  EEPROM.write(WAYPOINT_COUNT_POSITION, _numberOfWaypoints);
+  numberOfWaypoints--;
+  _storage->SetWaypointCount(numberOfWaypoints);
 }
 
 void Navigation::printWaypoint(Waypoint waypoint){
   Serial.println(waypoint.latitude);
   Serial.println(waypoint.longitude);
   Serial.println(waypoint.radiusHectometers);
-}
-
-boolean Navigation::validateWaypoint(Waypoint waypoint)
-{
-  byte readChecksum = waypoint.checksum;
-  waypoint.checksum = 0;
-
-  byte calculatedChecksum = CRC8((byte *) &waypoint, sizeof(waypoint));
-
-  waypoint.checksum = readChecksum;
-
-  return readChecksum == calculatedChecksum;
+  Serial.println(waypoint.checksum);
 }
 
 boolean Navigation::compareWaypoints(Waypoint wp1, Waypoint wp2)
@@ -151,21 +98,20 @@ int Navigation::courseChangeNeeded()
   // compare current waypoint to gps
   // if matched, shift forward waypoints
   double distanceToDestination = TinyGPSPlus::distanceBetween(
-      _gps.location.lat(), _gps.location.lng(),
+      lat(), lng(),
       (double) _currentWaypoint.latitude,
       (double) _currentWaypoint.longitude) / 100; // for hectometers
   
   if(distanceToDestination <  _currentWaypoint.radiusHectometers) {
     shiftWaypointsForward();
-    _currentWaypoint = retrieveWaypoint(1);
+    _currentWaypoint = _storage->RetrieveWaypoint(0);
   }
 
   // get current course
   // get desired course
   double currentCourse = currentHeading();
   double desiredCourse = TinyGPSPlus::courseTo(
-      _gps.location.lat(),
-      _gps.location.lng(),
+      lat(), lng(),
       (double) _currentWaypoint.latitude,
       (double) _currentWaypoint.longitude);
 
@@ -181,36 +127,33 @@ int Navigation::courseChangeNeeded()
   return courseChangeNeeded;
 }
 
-int Navigation::waypointEepromPosition(int waypointIndex)
-{
-  return waypointIndex * WAYPOINT_SIZE + WAYPOINT_STORAGE_OFFSET;
+double Navigation::lat() {
+  #if defined(USE_FAKE_LOCATION)
+    return FAKE_LAT;
+  #else
+    return _gps.location.lat();
+  #endif
 }
 
-int Navigation::retrieveWaypointCount() 
-{
-  return (int) EEPROM.read(WAYPOINT_COUNT_POSITION);
-}
-
-boolean Navigation::validateEeprom() {
-  _numberOfWaypoints = retrieveWaypointCount();
-
-  Waypoint waypoint = retrieveWaypoint(0);
-
-  if(!compareWaypoints(waypoint, MEMORY_VALIDATING_WAYPOINT)){
-    return false;
-  }
-
-  return true;
+double Navigation::lng() {
+  #if defined(USE_FAKE_LOCATION)
+    return FAKE_LONG;
+  #else
+    return _gps.location.lng();
+  #endif
 }
 
 float Navigation::currentHeading() {
-  sensors_event_t event; 
-  _mag.getEvent(&event);
-
-  // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
-  // Calculate heading when the magnetometer is level, then correct for signs of axis.
-  float heading = atan2(event.magnetic.y, event.magnetic.x);
-  
+  float heading = 0;
+  #if defined(USE_FAKE_LOCATION)
+    heading = FAKE_HEADING;
+  #else
+    sensors_event_t event; 
+    _mag.getEvent(&event);
+    // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+    // Calculate heading when the magnetometer is level, then correct for signs of axis.
+    heading = atan2(event.magnetic.y, event.magnetic.x);
+  #endif
   // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
   // Find yours here: http://www.magnetic-declination.com/
   // Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
@@ -228,4 +171,20 @@ float Navigation::currentHeading() {
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/M_PI; 
   return headingDegrees;
+}
+
+byte Navigation::CRC8(const byte *data, byte len) {
+  byte crc = 0x00;
+  while (len--) {
+    byte extract = *data++;
+    for (byte tempI = 8; tempI; tempI--) {
+      byte sum = (crc ^ extract) & 0x01;
+      crc >>= 1;
+      if (sum) {
+        crc ^= 0x8C;
+      }
+      extract >>= 1;
+    }
+  }
+  return crc;
 }
