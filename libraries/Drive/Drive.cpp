@@ -96,6 +96,6 @@ void Drive::turnSecondaryDrive(int leftRightCenter) {
   }
 }
 
-void Drive::speed(int percent) {
+void Drive::speed(int percent) { // positive negative for forward/reverse
   // TODO do nothing for now
 }

@@ -15,6 +15,7 @@ Pilot::Pilot()
   _nav = new Navigation(_sensors, _storage, _power);
   _comms = new Communications(_nav, _sensors, _power, _storage);
   _drive = new Drive(_power);
+  _lastManualControlData = {0, 0}; // zero speed and zero rudder turn
   _manualControl = false;
 }
 
@@ -61,12 +62,16 @@ void Pilot::manageComms() {
       _drive->on();
     }
   }
+  if(_comms->controlDataAvailable()) {
+    Command cmd = _comms->readControlData();
+    if(cmd.command == '\'')
+      _lastManualControlData = {cmd.data[0], cmd.data[1]};
+  }
 }
 
 void Pilot::manual() {
-  ManualControlData input = _comms->readManualControlData();
-  _drive->direction(input.leftRightCenter);
-  _drive->speed(input.forwardReverse);
+  _drive->direction(_lastManualControlData.leftRightCenter);
+  _drive->speed(_lastManualControlData.forwardReverse);
 }
 
 boolean Pilot::driveInterrupts() {

@@ -17,6 +17,9 @@ class Storage
 {
   public:
     Storage();
+    void lastCommunicatedOn(int day);
+    int lastCommunicatedOn();
+
     void AppendNewWaypoint(Waypoint waypoint);
     void StoreWaypoint(Waypoint waypoint, int waypointNumber);
     Waypoint RetrieveWaypoint(int waypointNumber);

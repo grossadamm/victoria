@@ -4,18 +4,12 @@
 #include "Arduino.h"
 #include "Navigation.h"
 #include "Sensors.h"
+#include "Power.h"
+#include "Storage.h"
 #include <RF24.h>
 #include "ControlMessage.h"
-#include "GPSComms.h"
 #include "Command.h"
-
-struct ManualControlData; /* Forward declaration */
-
-typedef struct ManualControlData
-{
-  uint8_t forwardReverse;
-  uint8_t leftRightCenter;
-} ManualControlData;
+#include "GPSComms.h"
 
 class Communications
 {
@@ -26,7 +20,6 @@ class Communications
     boolean sendMessage(byte message[50]);
     boolean controlDataAvailable();
     Command readControlData();
-    ManualControlData readManualControlData();
   private:
     void applyTemperatures(byte message[50]);
     void applyCoordinates(byte message[50]);
@@ -37,7 +30,6 @@ class Communications
     GPSComms* _gpsComms;
     bool _rfEnabled;
     RF24* _radio;
-    ManualControlData _lastControlData;
     ControlMessage* _lastControlMessage;
 };
 

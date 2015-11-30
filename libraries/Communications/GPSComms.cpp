@@ -22,7 +22,7 @@ boolean GPSComms::needToCommunicate()
 boolean GPSComms::sendMessage(byte message[50]){
   Serial.println("sending!");
   _power->gpsComms(true);
-  lastCommunicatedOn(day());
+  _storage->lastCommunicatedOn(day());
   _power->gpsComms(false);
   return true;  
 }
@@ -33,8 +33,4 @@ void GPSComms::readMessage(byte message[50]) {
 
 boolean GPSComms::communicatedToday() {
   return _storage->lastCommunicatedOn() == day();
-}
-
-void GPSComms::lastCommunicatedOn(int day) {
-  EEPROM.write(DAY_LAST_COMMUNICATED_POSITION, day);
 }

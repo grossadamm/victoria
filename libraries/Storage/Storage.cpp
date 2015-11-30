@@ -15,11 +15,11 @@ const PROGMEM int DAY_LAST_COMMUNICATED_STORAGE_POSITION = 2;
 const PROGMEM int WAYPOINT_STORAGE_POSITION = 3;
 
 void Storage::lastCommunicatedOn(int day) {
-  EEPROM_writeAnything(DAY_LAST_COMMUNICATED_STORAGE_POSITION, (char) day);
+  EEPROM.write(DAY_LAST_COMMUNICATED_STORAGE_POSITION, (char) day);
 }
 
 int Storage::lastCommunicatedOn() {
-  EEPROM_readAnything(DAY_LAST_COMMUNICATED_STORAGE_POSITION);
+  (int) EEPROM.read(DAY_LAST_COMMUNICATED_STORAGE_POSITION);
 }
 
 // Waypoints

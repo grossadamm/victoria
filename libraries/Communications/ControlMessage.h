@@ -2,7 +2,6 @@
 #define ControlMessage_h
 
 #include "Arduino.h"
-#include "Communications.h"
 #include "Command.h"
 
 class ControlMessage

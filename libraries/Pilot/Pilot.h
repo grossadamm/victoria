@@ -7,6 +7,14 @@
 #include "Sensors.h"
 #include "Communications.h"
 
+struct ManualControlData; /* Forward declaration */
+
+typedef struct ManualControlData
+{
+  char forwardReverse;
+  char leftRightCenter;
+} ManualControlData;
+
 class Pilot
 {
   public:
@@ -29,6 +37,7 @@ class Pilot
     Power* _power;
     int secondsSlept;
     boolean _manualControl;
+    ManualControlData _lastManualControlData;
 };
 
 #endif

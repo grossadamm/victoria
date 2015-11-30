@@ -16,7 +16,6 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
   _lastControlMessage = new ControlMessage(new char {});
   _rfEnabled = true;
   _radio = new RF24(8, 9);
-  _lastControlData = {0, 0}; // zero speed and zero rudder turn
   setSyncProvider(RTC.get); 
 }
 
@@ -31,13 +30,19 @@ void Communications::buildMessage(byte message[50])
   msg->print();
 }
 
+boolean Communications::needToCommunicate() {
+  if(_rfEnabled)
+    return true;
+  return _gpsComms->needToCommunicate();
+}
+
 boolean Communications::sendMessage(byte message[50]){
   Serial.println("sending!");
   return true;  
 }
 
 boolean Communications::controlDataAvailable() {
-  return _lastControlMessage->commandsAvailable();
+  return _lastControlMessage->commandsAvailable(); // TODO can get stuck since we aren't checking
 }
 
 Command Communications::readControlData() {
