@@ -10,6 +10,7 @@ class Power
     void gps(boolean onOff);
     void gpsComms(boolean onOff);
     void mainDrive(boolean onOff);
+    void rfComms(boolean onOff);
     void rtc(boolean onOff);
     void rudder(boolean onOff);
     void rudderDirectionForward(boolean onOff);

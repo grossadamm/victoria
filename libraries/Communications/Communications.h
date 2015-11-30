@@ -6,10 +6,10 @@
 #include "Sensors.h"
 #include "Power.h"
 #include "Storage.h"
-#include <RF24.h>
 #include "ControlMessage.h"
 #include "Command.h"
 #include "GPSComms.h"
+#include "RFComms.h"
 
 class Communications
 {
@@ -20,6 +20,7 @@ class Communications
     boolean sendMessage(byte message[50]);
     boolean controlDataAvailable();
     Command readControlData();
+    boolean useGps();
   private:
     void applyTemperatures(byte message[50]);
     void applyCoordinates(byte message[50]);
@@ -28,8 +29,8 @@ class Communications
     Power* _power;
     Storage* _storage;
     GPSComms* _gpsComms;
+    RFComms* _rfComms;
     bool _rfEnabled;
-    RF24* _radio;
     ControlMessage* _lastControlMessage;
 };
 

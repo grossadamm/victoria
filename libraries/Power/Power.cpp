@@ -7,7 +7,8 @@ const PROGMEM int RUDDER_DIRECTION_PIN = 12;
 const PROGMEM int TEMP_MOSFET = 22;
 const PROGMEM int RTC_MOSFET = 23;
 const PROGMEM int GPS_MOSFET = 24;
-const PROGMEM int GPS_COMMS_MOSFET = 24;
+const PROGMEM int GPS_COMMS_MOSFET = 28; // NOT SURE
+const PROGMEM int RF_COMMS_MOSFET = 29; // NOT SURE
 const PROGMEM int RUDDER_MOSFET = 30;
 const PROGMEM int MAIN_DRIVE_MOSFET = 31;
 const PROGMEM int SECONDARY_DRIVE_MOSFET = 32;
@@ -40,6 +41,10 @@ void Power::mainDrive(boolean onOff) {
 
 void Power::secondaryDrive(boolean onOff) {
   digitalWrite(SECONDARY_DRIVE_MOSFET, onOff ? HIGH : LOW);
+}
+
+void Power::rfComms(boolean onOff) {
+  digitalWrite(RF_COMMS_MOSFET, onOff ? HIGH : LOW);
 }
 
 void Power::rtc(boolean onOff) {

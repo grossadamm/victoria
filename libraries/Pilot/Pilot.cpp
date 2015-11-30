@@ -56,7 +56,9 @@ void Pilot::manageComms() {
     _comms->buildMessage(message);
 
     boolean wasOn = _drive->isOn();
-    _drive->off();
+    if(_comms->useGps()){
+      _drive->off();
+    }
     _comms->sendMessage(message);
     if(wasOn) {
       _drive->on();
@@ -71,6 +73,20 @@ void Pilot::processCommsData() {
   Command cmd = _comms->readControlData();
   if(cmd.command == '\'')
     _lastManualControlData = {cmd.data[0], cmd.data[1]};
+
+  // N**$ Override next waypoint
+  // O**$ Override all waypoints
+  // S**$ Sleep for x hours
+  // U**$ Update every x hours
+  // C**$ Check for messages every x hours
+  // T**$ Run test every x motor runs
+  // E$ Enable receiver
+  // D$ Disable receiver
+  // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
+  // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
+  // A$ Automated control
+  // Z$ Manual control 
+  // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
 }
 
 void Pilot::manual() {

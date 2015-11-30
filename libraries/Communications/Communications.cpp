@@ -13,9 +13,9 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
   _sensors = sensors;
   _power = power;
   _gpsComms = new GPSComms(power, storage);
+  _rfComms = new RFComms(power);
   _lastControlMessage = new ControlMessage(new char {});
   _rfEnabled = true;
-  _radio = new RF24(8, 9);
   setSyncProvider(RTC.get); 
 }
 
@@ -30,32 +30,40 @@ void Communications::buildMessage(byte message[50])
   msg->print();
 }
 
+boolean Communications::useGps() {
+  return !_rfComms->isOn();
+}
+
 boolean Communications::needToCommunicate() {
-  if(_rfEnabled)
-    return true;
-  return _gpsComms->needToCommunicate();
+  return _rfComms->needToCommunicate() || _gpsComms->needToCommunicate();
 }
 
 boolean Communications::sendMessage(byte message[50]){
-  Serial.println("sending!");
-  return true;  
+  if(_rfComms->isOn()) {
+    return _rfComms->sendMessage(message);
+  } else {
+    return _gpsComms->sendMessage(message);
+  }
 }
 
 boolean Communications::controlDataAvailable() {
-  return _lastControlMessage->commandsAvailable(); // TODO can get stuck since we aren't checking
+  return _lastControlMessage->commandsAvailable() || _rfComms->dataAvailable(); // TODO can get stuck since we aren't checking
 }
 
 Command Communications::readControlData() {
-  char buffer[32];
-  bool newData = false;
-
-  if(_radio->available() && !_lastControlMessage->commandsAvailable()){
-    _radio->read(&buffer,32);
-    newData = true;
+  if(_lastControlMessage->commandsAvailable()) {
+    return _lastControlMessage->getCommand();
   }
 
-  if(newData)
+  if(useGps()) {
+    // read from gps
+  } else {
+    char buffer[32];
+    _rfComms->readMessage(buffer);
     _lastControlMessage = new ControlMessage(buffer);
+  }
 
-  return _lastControlMessage->getCommand();
+  if(_lastControlMessage->commandsAvailable()) {
+    return _lastControlMessage->getCommand();
+  }
 }
