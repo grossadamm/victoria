@@ -63,10 +63,14 @@ void Pilot::manageComms() {
     }
   }
   if(_comms->controlDataAvailable()) {
-    Command cmd = _comms->readControlData();
-    if(cmd.command == '\'')
-      _lastManualControlData = {cmd.data[0], cmd.data[1]};
+    processCommsData();
   }
+}
+
+void Pilot::processCommsData() {
+  Command cmd = _comms->readControlData();
+  if(cmd.command == '\'')
+    _lastManualControlData = {cmd.data[0], cmd.data[1]};
 }
 
 void Pilot::manual() {

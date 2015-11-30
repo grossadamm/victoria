@@ -28,6 +28,7 @@ class Pilot
     void manual();
     void smartSleep(int minutes);
     void setCourse();
+    void processCommsData();
     boolean waitForNav();
     Navigation* _nav;
     Sensors* _sensors;
