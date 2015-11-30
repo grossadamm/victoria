@@ -3,14 +3,7 @@
 
 #include "Arduino.h"
 #include "Communications.h"
-
-struct Command; /* Forward declaration */
-
-typedef struct Command
-{
-  char command;
-  char* data;
-} Command;
+#include "Command.h"
 
 class ControlMessage
 {

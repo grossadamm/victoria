@@ -13,7 +13,7 @@ Pilot::Pilot()
   _power = new Power();
   _sensors = new Sensors(_power);
   _nav = new Navigation(_sensors, _storage, _power);
-  _comms = new Communications(_nav, _sensors, _power);
+  _comms = new Communications(_nav, _sensors, _power, _storage);
   _drive = new Drive(_power);
   _manualControl = false;
 }
@@ -64,7 +64,7 @@ void Pilot::manageComms() {
 }
 
 void Pilot::manual() {
-  ManualControlData input = _comms->readControlData();
+  ManualControlData input = _comms->readManualControlData();
   _drive->direction(input.leftRightCenter);
   _drive->speed(input.forwardReverse);
 }
