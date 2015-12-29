@@ -1,10 +1,5 @@
 Pilot* pilot;
 
-// EEPROM USAGE: 
-// BYTE 0: DAY LAST COMMUNICATED
-// BYTE 1: NUMBER OF WAYPOINTS STORED
-// ONWARDS: WAYPOINTS
-
 // RUDDER REVOLUTION ENCODER COUNTS 126000
 
 // PIN USAGE:
@@ -14,13 +9,16 @@ Pilot* pilot;
 // 3:  RUDDER PWM - SHIELD
 // 8:  SHIELD RESERVED
 // 9:  BRAKE RUDDER - SHIELD
+// 10: GPSComms sleep pin
 // 11: SHIELD RESERVED
 // 12: FORWARD RUDDER - SHIELD
 // 13: SHIELD RESERVED
-// 14: GPS
-// 15: GPS
-// 18: RUDDER ENCODER
-// 19: RUDDER ENCODER
+// 14: GPS - Serial3
+// 15: GPS - Serial3
+// 16: GPSComms - Serial2
+// 17: GPSComms - Serial2
+// 18: RUDDER ENCODER - Serial1
+// 19: RUDDER ENCODER - Serial1
 // 20: RTC
 // 21: RTC
 // 22: TEMP MOSFET
@@ -48,6 +46,14 @@ void loop()
   unsigned long diff = millis() - time;
   if(diff>10)
     Serial.println("Took too long to run this loop!");
+}
+
+bool ISBDCallback()
+{
+  pilot->insideISBD();
+  loop();
+  pilot->outsideISBD();
+  return true;
 }
 
 

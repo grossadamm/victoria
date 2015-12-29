@@ -2,7 +2,6 @@
 #include "Time.h"
 #include "Wire.h"
 #include "DS1307RTC.h"
-#include "EEPROM.h"
 #include "Message.h"
 
 const PROGMEM int DAY_LAST_COMMUNICATED_POSITION = 1;

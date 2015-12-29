@@ -16,6 +16,7 @@
 #include <printf.h>
 #include <RF24.h>
 #include <RF24_config.h>
+#include <IridiumSBD.h>
 
 // Time
 #include <Time.h>

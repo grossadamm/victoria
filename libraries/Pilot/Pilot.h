@@ -20,8 +20,10 @@ class Pilot
   public:
     Pilot();
     void run();
+    void insideISBD();
+    void outsideISBD();
   private:
-    boolean driveInterrupts();
+    bool driveInterrupts();
     void drive();
     void manageLights();
     void manageComms();
@@ -29,7 +31,7 @@ class Pilot
     void smartSleep(int minutes);
     void setCourse();
     void processCommsData();
-    boolean waitForNav();
+    bool waitForNav();
     Navigation* _nav;
     Sensors* _sensors;
     Communications* _comms;
@@ -37,8 +39,9 @@ class Pilot
     Storage* _storage;
     Power* _power;
     int secondsSlept;
-    boolean _manualControl;
+    bool _manualControl;
     ManualControlData _lastManualControlData;
+    bool _insideISBD;
 };
 
 #endif

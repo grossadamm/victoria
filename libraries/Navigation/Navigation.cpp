@@ -36,8 +36,8 @@ boolean Navigation::ready()
 
   _power->gps(true);
    _mag.begin();
-  while (Serial1.available() > 0) // read gps data if available
-    _gps.encode(Serial1.read());
+  while (Serial3.available() > 0) // read gps data if available
+    _gps.encode(Serial3.read());
 
   if(_gps.location.isValid()){
     _currentDeclination = AP_Declination::get_declination(_gps.location.lat(),  _gps.location.lng()) * RADIANS;

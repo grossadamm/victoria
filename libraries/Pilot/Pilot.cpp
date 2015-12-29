@@ -17,6 +17,7 @@ Pilot::Pilot()
   _drive = new Drive(_power);
   _lastManualControlData = {0, 0}; // zero speed and zero rudder turn
   _manualControl = false;
+  _insideISBD = false;
 }
 
 void Pilot::run()
@@ -41,6 +42,14 @@ void Pilot::run()
   }
 }
 
+void Pilot::insideISBD() {
+  _insideISBD = true;
+}
+
+void Pilot::outsideISBD(){
+  _insideISBD = false;
+}
+
 void Pilot::manageLights() {
   if(_sensors->night() && _sensors->batteryAbove(45)) {
    // lights on
@@ -51,6 +60,9 @@ void Pilot::manageLights() {
 }
 
 void Pilot::manageComms() {
+  if(_insideISBD) {
+    return;
+  }
   if(_comms->needToCommunicate()) {
     byte message[50];
     _comms->buildMessage(message);
