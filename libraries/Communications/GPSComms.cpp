@@ -34,6 +34,9 @@ boolean GPSComms::sendMessage(byte message[50]){
   byte rxBuffer[50];
   size_t size = 50;
   int result = isbd.sendReceiveSBDBinary(message, size, rxBuffer, size);
+  for(int i = 0; i < 50; i++) {
+     _lastMessageReceived[i] = rxBuffer[i];
+   }
   isbd.sleep();
 
   _storage->lastCommunicatedOn(day());
@@ -42,7 +45,12 @@ boolean GPSComms::sendMessage(byte message[50]){
 }
 
 void GPSComms::readMessage(byte message[50]) {
-   // mailbox check costs a credit
+   for(int i = 0; i < 50; i++) {
+     message[i] = _lastMessageReceived[i];
+   }
+   for(int i = 0; i < 50; i++) {
+     _lastMessageReceived[i] = 0;
+   }
 }
 
 boolean GPSComms::communicatedToday() {

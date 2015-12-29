@@ -16,6 +16,7 @@ class GPSComms
     void lastCommunicatedOn(int day);
     Power* _power;
     Storage* _storage;
+    byte* _lastMessageReceived;
 };
 
 #endif
