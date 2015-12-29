@@ -1,9 +1,5 @@
 Pilot* pilot;
 
-boolean DRIVING = true;
-boolean SLEEPING = false;
-boolean STATE = false;
-
 // EEPROM USAGE: 
 // BYTE 0: DAY LAST COMMUNICATED
 // BYTE 1: NUMBER OF WAYPOINTS STORED

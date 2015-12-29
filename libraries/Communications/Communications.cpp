@@ -15,7 +15,6 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
   _gpsComms = new GPSComms(power, storage);
   _rfComms = new RFComms(power);
   _lastControlMessage = new ControlMessage(new char {});
-  _rfEnabled = true;
   setSyncProvider(RTC.get); 
 }
 
@@ -56,7 +55,7 @@ Command Communications::readControlData() {
   }
 
   if(useGps()) {
-    // read from gps
+    // TODO read from gps
   } else {
     char buffer[32];
     _rfComms->readMessage(buffer);
@@ -66,4 +65,12 @@ Command Communications::readControlData() {
   if(_lastControlMessage->commandsAvailable()) {
     return _lastControlMessage->getCommand();
   }
+}
+
+void Communications::disableRF() {
+  _rfComms->off();
+}
+
+void Communications::enableRF() {
+  _rfComms->on();
 }

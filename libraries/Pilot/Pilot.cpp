@@ -72,21 +72,31 @@ void Pilot::manageComms() {
 void Pilot::processCommsData() {
   Command cmd = _comms->readControlData();
   if(cmd.command == '\'')
-    _lastManualControlData = {cmd.data[0], cmd.data[1]};
-
-  // N**$ Override next waypoint
-  // O**$ Override all waypoints
-  // S**$ Sleep for x hours
-  // U**$ Update every x hours
-  // C**$ Check for messages every x hours
-  // T**$ Run test every x motor runs
-  // E$ Enable receiver
-  // D$ Disable receiver
-  // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
-  // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
-  // A$ Automated control
-  // Z$ Manual control 
-  // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
+    _lastManualControlData = {cmd.data[0], cmd.data[1]}; // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
+  else if(cmd.command == 'Z')
+    _manualControl = true; // Z$ Manual control 
+  else if(cmd.command == 'A')
+    _manualControl = false; // A$ Automated control
+  else if(cmd.command == 'E')
+    _comms->enableRF();// E$ Enable receiver
+  else if(cmd.command == 'D')
+    _comms->disableRF();// D$ Disable receiver
+  else if(cmd.command == 'N')
+    bool foo = false;  // N**$ Override next waypoint
+  else if(cmd.command == 'O')
+    bool foo = false;  // O**$ Override all waypoints
+  else if(cmd.command == 'S')
+    smartSleep(cmd.data[0]*60);  // S**$ Sleep for x hours
+  else if(cmd.command == 'U')
+    bool foo = false;  // U**$ Update every x hours
+  else if(cmd.command == 'C')
+    bool foo = false;  // C**$ Check for messages every x hours
+  else if(cmd.command == 'T')
+    bool foo = false;  // T**$ Run test every x motor runs
+  else if(cmd.command == 'P') {
+    // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
+    // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
+  }
 }
 
 void Pilot::manual() {

@@ -21,6 +21,8 @@ class Communications
     boolean controlDataAvailable();
     Command readControlData();
     boolean useGps();
+    void disableRF();
+    void enableRF();
   private:
     void applyTemperatures(byte message[50]);
     void applyCoordinates(byte message[50]);
@@ -30,7 +32,6 @@ class Communications
     Storage* _storage;
     GPSComms* _gpsComms;
     RFComms* _rfComms;
-    bool _rfEnabled;
     ControlMessage* _lastControlMessage;
 };
 
