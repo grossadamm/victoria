@@ -19,8 +19,8 @@ Pilot* pilot;
 // 17: GPSComms - Serial2
 // 18: RUDDER ENCODER - Serial1
 // 19: RUDDER ENCODER - Serial1
-// 20: RTC
-// 21: RTC
+// 20: RTC - SDA
+// 21: RTC - SCL
 // 22: TEMP MOSFET
 // 23: RTC MOSFET
 // 24: GPS MOSFET
@@ -30,6 +30,10 @@ Pilot* pilot;
 // 28: PHOTORESISTOR MOSFET
 // 29: ROTATION MOSFET
 // 30: DIRECTION_SERVO_PIN
+// 50: RF - MISO
+// 51: RF - MOSI
+// 52: RF - SCK
+// 53: RF - SS
 void setup()
 {
   Serial.begin(9600);

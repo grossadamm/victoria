@@ -9,11 +9,19 @@ RFComms::RFComms(Power* power)
 }
 
 void RFComms::on(){
+  byte addresses[][6] = {"1Node","2Node"}; // TODO dunno what this is
   _power->rfComms(true);
+  _radio->begin();
+  _radio->openWritingPipe(addresses[0]);
+  _radio->openReadingPipe(1,addresses[1]);
+  _radio->enableAckPayload();                     // Allow optional ack payloads
+  _radio->enableDynamicPayloads();                // Ack payloads are dynamic payloads
+  _radio->startListening();
   _on = true;
 }
 
 void RFComms::off() {
+  _radio->stopListening();
   _power->rfComms(false);
   _on = false;
 }
@@ -24,7 +32,21 @@ boolean RFComms::needToCommunicate()
 }
 
 boolean RFComms::sendMessage(byte message[50]){
-  Serial.println("not sending! not yet implemented");
+  _radio->stopListening();  
+  byte buffer[32];
+  for(int i = 0; i < 32; i++) {
+    buffer[i] = message[i];
+  }
+  _radio->write( &buffer, sizeof(buffer) );
+  for(int i = 0; i < 32; i++) {
+    buffer[i] = 0;
+  }
+  for(int i = 32; i < 50; i++) {
+    buffer[i-32] = message[i];
+  }
+  _radio->write( &buffer, sizeof(buffer) );
+
+  _radio->startListening();
   return false;  
 }
 
