@@ -44,10 +44,10 @@ boolean RFComms::sendMessage(byte message[50]){
   for(int i = 32; i < 50; i++) {
     buffer[i-32] = message[i];
   }
-  _radio->write( &buffer, sizeof(buffer) );
+  int result = _radio->write( &buffer, sizeof(buffer) );
 
   _radio->startListening();
-  return false;  
+  return result == 0;  
 }
 
 boolean RFComms::dataAvailable() {
