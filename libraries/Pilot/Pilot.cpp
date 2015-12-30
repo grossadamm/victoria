@@ -20,6 +20,10 @@ Pilot::Pilot()
   _insideISBD = false;
 }
 
+// This is the "loop" that continues to making things go
+// first make sure we aren't burning up motors
+// then communicate as needed
+// then drive or sleep
 void Pilot::run()
 {
   if (driveInterrupts()) {
