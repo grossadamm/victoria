@@ -30,7 +30,7 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544d52687CLL };              // Ra
 
 typedef enum { role_ping_out = 1, role_pong_back } role_e;                 // The various roles supported by this sketch
 const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};  // The debug-friendly names of those roles
-role_e role = role_pong_back;                                              // The role of the current running sketch
+role_e role = role_ping_out;                                              // The role of the current running sketch
 
 // A single byte to keep track of the data being sent back and forth
 byte counter = 1;

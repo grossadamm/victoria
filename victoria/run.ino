@@ -30,13 +30,15 @@ Pilot* pilot;
 // 28: PHOTORESISTOR MOSFET
 // 29: ROTATION MOSFET
 // 30: DIRECTION_SERVO_PIN
+// 48: RF - CE
+// 49: RF - CSN
 // 50: RF - MISO
 // 51: RF - MOSI
 // 52: RF - SCK
-// 53: RF - SS
+
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pilot = new Pilot();
   Serial.println("Pilot initialized");
   delay(100); 
@@ -48,7 +50,7 @@ void loop()
   time = millis();
   pilot->run();
   unsigned long diff = millis() - time;
-  if(diff>10)
+  if(diff>100)
     Serial.println("Took too long to run this loop!");
 }
 
