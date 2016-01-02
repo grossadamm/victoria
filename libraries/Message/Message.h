@@ -2,17 +2,16 @@
 #define Message_h
 
 #include "Arduino.h"
-#include "Sensors.h"
 
 class Message
 {
   public:
     Message(byte message[50]);
     void applyCoordinates(float lat, float longi);
-    void applyTemperatures(Temperatures temps);
+    void applyTemperatures(float water, float air, float internal, float battery);
     float readLatitude();
     float readLongitude();
-    Temperatures readTemperatures();
+    void readTemperatures(float temps[4]);
     void applyLightening(int count);
     int readLightening();
     void applyAttempts(int count);

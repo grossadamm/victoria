@@ -50,8 +50,11 @@ void loop()
   time = millis();
   pilot->run();
   unsigned long diff = millis() - time;
-  if(diff>100)
-    Serial.println("Took too long to run this loop!");
+  if(diff>10) {
+    Serial.print("Took too long to run this loop! ");
+    Serial.print(diff);
+    Serial.println("ms");
+  }
 }
 
 bool ISBDCallback()

@@ -10,6 +10,7 @@
 #include <DallasTemperature.h>
 
 // Comms
+#include <Message.h>
 #include <Communications.h>
 #include <SPI.h>
 #include "RF24.h"

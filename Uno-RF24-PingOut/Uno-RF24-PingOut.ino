@@ -1,3 +1,5 @@
+#include <Message.h>
+
 
 /*
 * Getting Started example sketch for nRF24L01+ radios
@@ -58,8 +60,6 @@ if (role == 1)  {
 
     char msg[] = "Z$A$?$";
     unsigned long sent = micros();
-    Serial.println(msg);
-    Serial.println(sizeof(msg));
      if (!radio.write( &msg, sizeof(msg) )){
        Serial.println(F("failed"));
      }
@@ -79,18 +79,40 @@ if (role == 1)  {
     if ( timeout ){                                             // Describe the results
         Serial.println(F("Failed, response timed out."));
     }else{
-        unsigned long got_time;                                 // Grab the response, compare, and send to debugging spew
-        radio.read( &got_time, sizeof(unsigned long) );
+      bool partOne = true;
+      byte message[50] = {0};
+      while(radio.available()) {
+        byte buffer[32] = {0};
+        radio.read( buffer, sizeof(buffer) );
         unsigned long time = micros();
         
         // Spew it
         Serial.print(F("Sent "));
-        Serial.print(time);
+        Serial.print(msg);
         Serial.print(F(", Got response "));
-        Serial.print(got_time);
+        for(int i=0; i<32; i++){
+          Serial.print(buffer[i]);
+        }
         Serial.print(F(", Round-trip delay "));
         Serial.print(time-sent);
         Serial.println(F(" microseconds"));
+
+        if(partOne) {
+          for(int i =0; i< 32; i++) {
+            message[i] = buffer[i];
+          }
+          partOne = false;
+        } else {
+          for(int i = 0; i< 18; i++) {
+            message[32 + i] = buffer[i];
+          }
+          partOne = true;
+        }
+      }
+
+      Message *msg = new Message(message);
+      Serial.println(msg->readLatitude());
+      Serial.println(msg->readLongitude());
     }
 
     // Try again 1s later

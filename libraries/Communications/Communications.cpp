@@ -21,8 +21,12 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
 void Communications::buildMessage(byte message[50])
 {
   Serial.println("Building the message");
+  for(int i = 0; i < 50; i++) {
+    message[i] = 0;
+  }
   Message* msg = new Message(message);
-  msg->applyTemperatures(_sensors->retrieveTemperatures());
+  Temperatures temps = _sensors->retrieveTemperatures();
+  msg->applyTemperatures(temps.water, temps.air, temps.internal, temps.battery);
   msg->applyLightening(5);
   msg->applyAttempts(0);
   msg->applyCoordinates(_nav->lat(), _nav->lng());
