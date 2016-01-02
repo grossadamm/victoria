@@ -42,6 +42,7 @@ void Pilot::run()
   drive();
 
   if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
+    Serial.println("Would sleep for 10");
     smartSleep(10);
   }
 }
@@ -87,10 +88,10 @@ void Pilot::manageComms() {
 
 void Pilot::processCommsData() {
   Command cmd = _comms->readControlData();
-  Serial.print("New command: ");
-  Serial.println(cmd.command);
-  Serial.print("New data: ");
-  Serial.println(cmd.data);
+  // Serial.print("New command: ");
+  // Serial.println(cmd.command);
+  // Serial.print("New data: ");
+  // Serial.println(cmd.data);
   if(cmd.command == '\'')
     _lastManualControlData = {cmd.data[0], cmd.data[1]}; // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
   else if(cmd.command == 'Z')
@@ -187,10 +188,10 @@ boolean Pilot::waitForNav() {
     while(!_sensors->timeout(futureTime, 45) && !_nav->ready()){ // attempt for 45 seconds
       delay(100);
     }
-    if(!_nav->ready()) { // if still not good, wait 10 minutes
+    if(!_nav->ready()) { // if still not good, wait 1 minutes
       Serial.println("Nav failed after 45 seconds, sleeping");
       delay(100);
-      smartSleep(10);
+      smartSleep(1);
       attempts++;
     }
     if(_nav->ready())

@@ -20,7 +20,6 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
 
 void Communications::buildMessage(byte message[50])
 {
-  Serial.println("Building the message");
   for(int i = 0; i < 50; i++) {
     message[i] = 0;
   }
@@ -30,7 +29,7 @@ void Communications::buildMessage(byte message[50])
   msg->applyLightening(5);
   msg->applyAttempts(0);
   msg->applyCoordinates(_nav->lat(), _nav->lng());
-  msg->print();
+  // msg->print();
 }
 
 boolean Communications::useGps() {
@@ -68,7 +67,7 @@ Command Communications::readControlData() {
   } else {
     char buffer[32] = {0};
     _rfComms->readMessage(buffer);
-    Serial.print("Buffer: ");
+    Serial.print("ControlData Received: ");
     Serial.println(buffer);
     _lastControlMessage = new ControlMessage(buffer);
   }

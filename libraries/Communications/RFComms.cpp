@@ -43,11 +43,11 @@ boolean RFComms::sendMessage(byte message[50]){
   for(int i = 0; i < 32; i++) {
     buffer[i] = message[i];
   }
-  Serial.print("Writing to rf: ");
-  for(int i=0; i<32; i++){
-    Serial.print(buffer[i]);
-  }
-  Serial.println(".");
+  // Serial.print("Writing to rf: ");
+  // for(int i=0; i<32; i++){
+  //   Serial.print(buffer[i]);
+  // }
+  // Serial.println(".");
   _radio->write( &buffer, sizeof(buffer) );
 
   for(int i = 0; i < 32; i++) {
@@ -56,11 +56,11 @@ boolean RFComms::sendMessage(byte message[50]){
   for(int i = 32; i < 50; i++) {
     buffer[i-32] = message[i];
   }
-  Serial.print("Writing to rf: ");
-  for(int i=0; i<32; i++){
-    Serial.print(buffer[i]);
-  }
-  Serial.println(".");
+  // Serial.print("Writing to rf: ");
+  // for(int i=0; i<32; i++){
+  //   Serial.print(buffer[i]);
+  // }
+  // Serial.println(".");
   int result = _radio->write( &buffer, sizeof(buffer) );
 
   _radio->startListening();

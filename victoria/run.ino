@@ -19,8 +19,8 @@ Pilot* pilot;
 // 17: GPSComms - Serial2
 // 18: RUDDER ENCODER - Serial1
 // 19: RUDDER ENCODER - Serial1
-// 20: RTC - SDA
-// 21: RTC - SCL
+// 20: RTC, COMPASS(w) - SDA
+// 21: RTC, COMPASS(o) - SCL
 // 22: TEMP MOSFET
 // 23: RTC MOSFET
 // 24: GPS MOSFET
