@@ -23,6 +23,7 @@ class Communications
     boolean useGps();
     void disableRF();
     void enableRF();
+    void sendStatusNextCheck();
   private:
     void applyTemperatures(byte message[50]);
     void applyCoordinates(byte message[50]);
@@ -33,6 +34,7 @@ class Communications
     GPSComms* _gpsComms;
     RFComms* _rfComms;
     ControlMessage* _lastControlMessage;
+    bool _needToCommunicateOverride;
 };
 
 #endif

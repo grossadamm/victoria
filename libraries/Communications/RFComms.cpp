@@ -34,26 +34,25 @@ void RFComms::off() {
 
 boolean RFComms::needToCommunicate()
 {  
-  return isOn();
+  return false;
 }
 
 boolean RFComms::sendMessage(byte message[50]){
-  // _radio->stopListening();  
+  _radio->stopListening();  
   byte buffer[32];
   for(int i = 0; i < 32; i++) {
     buffer[i] = message[i];
   }
-  // _radio->write( &buffer, sizeof(buffer) );
+  _radio->write( &buffer, sizeof(buffer) );
   for(int i = 0; i < 32; i++) {
     buffer[i] = 0;
   }
   for(int i = 32; i < 50; i++) {
     buffer[i-32] = message[i];
   }
-  // int result = _radio->write( &buffer, sizeof(buffer) );
+  int result = _radio->write( &buffer, sizeof(buffer) );
 
-  // _radio->startListening();
-  int result = 0;
+  _radio->startListening();
   return result == 0;  
 }
 
@@ -61,17 +60,15 @@ boolean RFComms::dataAvailable() {
   return _radio->available();
 }
 
-void RFComms::readMessage(char buffer[32]) {
+void RFComms::readMessage(char returnBuf[]) {
   if( _radio->available()){
-      while (_radio->available()) {                                   // While there is data ready
-        _radio->read( buffer, sizeof(buffer) );             // Get the payload
+    while (_radio->available()) { 
+      char buffer[32];
+      _radio->read( buffer, sizeof(buffer) );
+      for(int i = 0; i<32; i++) {
+        returnBuf[i] = buffer[i];
       }
-     
-      _radio->stopListening();                                        // First, stop listening so we can talk   
-      unsigned long foo = 1;
-      _radio->write( &foo, sizeof(unsigned long) );              // Send the final one back.      
-      _radio->startListening();                                       // Now, resume listening so we catch the next packets.     
-      Serial.print(F("Sent response "));
+    }
   }
 }
 

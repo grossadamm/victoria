@@ -14,6 +14,7 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
   _gpsComms = new GPSComms(power, storage);
   _rfComms = new RFComms(power);
   _lastControlMessage = new ControlMessage(new char {});
+  _needToCommunicateOverride = false;
   setSyncProvider(RTC.get); 
 }
 
@@ -32,11 +33,16 @@ boolean Communications::useGps() {
   return !_rfComms->isOn();
 }
 
+void Communications::sendStatusNextCheck() {
+  _needToCommunicateOverride = true;
+}
+
 boolean Communications::needToCommunicate() {
-  return _rfComms->needToCommunicate() || _gpsComms->needToCommunicate();
+  return _needToCommunicateOverride || _rfComms->needToCommunicate() || _gpsComms->needToCommunicate();
 }
 
 boolean Communications::sendMessage(byte message[50]){
+  _needToCommunicateOverride = false;
   if(_rfComms->isOn()) {
     return _rfComms->sendMessage(message);
   } else {
@@ -56,8 +62,10 @@ Command Communications::readControlData() {
   if(useGps()) {
     // TODO read from gps
   } else {
-    char buffer[32];
+    char buffer[32] = {0};
     _rfComms->readMessage(buffer);
+    Serial.print("Buffer: ");
+    Serial.println(buffer);
     _lastControlMessage = new ControlMessage(buffer);
   }
 

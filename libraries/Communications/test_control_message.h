@@ -26,3 +26,22 @@ test(ControlMessage_fetchfetch)
   foo = cm->getCommand();
   assertEqual(0, cm->commandsAvailable());
 }
+
+test(ControlMessage_fetchfetchfetch) 
+{
+  char m[9] = "Z$A$?$";
+  ControlMessage* cm = new ControlMessage(m);
+  assertEqual(1, cm->commandsAvailable());
+  Command foo = cm->getCommand();
+  assertEqual('Z', foo.command);
+
+  assertEqual(1, cm->commandsAvailable());
+  foo = cm->getCommand();
+  assertEqual('A', foo.command);
+
+  assertEqual(1, cm->commandsAvailable());
+  foo = cm->getCommand();
+  assertEqual('?', foo.command);
+
+  assertEqual(0, cm->commandsAvailable());
+}

@@ -12,7 +12,7 @@ class RFComms
     RFComms(Power* power);
     boolean needToCommunicate();
     boolean sendMessage(byte message[50]);
-    void readMessage(char buffer[32]);
+    void readMessage(char buffer[]);
     boolean dataAvailable();
     void on();
     void off();

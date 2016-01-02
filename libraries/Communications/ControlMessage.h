@@ -11,7 +11,10 @@ class ControlMessage
     Command getCommand();
     bool commandsAvailable();
   private:
-    char* _message;
+    void setNextEndIndex();
+    char _message[32];
+    int _startIndex;
+    int _endIndex;
 };
 
 #endif

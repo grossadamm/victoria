@@ -26,24 +26,24 @@ Pilot::Pilot()
 // then drive or sleep
 void Pilot::run()
 {
-  // if (driveInterrupts()) {
-  //   _drive->off();
-  // }
+  if (driveInterrupts()) {
+    _drive->off();
+  }
 
-  // manageLights();
+  manageLights();
 
   manageComms();
 
-  // if(_manualControl) {
-  //   manual();
-  //   return;
-  // }
+  if(_manualControl) {
+    manual();
+    return;
+  }
 
-  // drive();
+  drive();
 
-  // if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
-  //   smartSleep(10);
-  // }
+  if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
+    smartSleep(10);
+  }
 }
 
 void Pilot::insideISBD() {
@@ -64,22 +64,22 @@ void Pilot::manageLights() {
 }
 
 void Pilot::manageComms() {
-  // if(_insideISBD) {
-  //   return;
-  // }
-  // if(_comms->needToCommunicate()) {
-  //   byte message[50];
-  //   _comms->buildMessage(message);
+  if(_insideISBD) {
+    return;
+  }
+  if(_comms->needToCommunicate()) {
+    byte message[50];
+    _comms->buildMessage(message);
 
-  //   boolean wasOn = _drive->isOn();
-  //   if(_comms->useGps()){
-  //     _drive->off();
-  //   }
-  //   _comms->sendMessage(message);
-  //   if(wasOn) {
-  //     _drive->on();
-  //   }
-  // }
+    boolean wasOn = _drive->isOn();
+    if(_comms->useGps()){
+      _drive->off();
+    }
+    _comms->sendMessage(message);
+    if(wasOn) {
+      _drive->on();
+    }
+  }
   if(_comms->controlDataAvailable()) {
     processCommsData();
   }
@@ -87,13 +87,18 @@ void Pilot::manageComms() {
 
 void Pilot::processCommsData() {
   Command cmd = _comms->readControlData();
+  Serial.print("New command: ");
   Serial.println(cmd.command);
+  Serial.print("New data: ");
+  Serial.println(cmd.data);
   if(cmd.command == '\'')
     _lastManualControlData = {cmd.data[0], cmd.data[1]}; // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
   else if(cmd.command == 'Z')
     _manualControl = true; // Z$ Manual control 
   else if(cmd.command == 'A')
     _manualControl = false; // A$ Automated control
+  else if(cmd.command == '?')
+    _comms->sendStatusNextCheck();
   else if(cmd.command == 'E')
     _comms->enableRF();// E$ Enable receiver
   else if(cmd.command == 'D')
@@ -113,6 +118,8 @@ void Pilot::processCommsData() {
   else if(cmd.command == 'P') {
     // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
     // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
+  } else {
+    Serial.println("Invalid command received");
   }
 }
 
