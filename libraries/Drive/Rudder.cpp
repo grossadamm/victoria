@@ -23,17 +23,13 @@ void Rudder::set(int leftRightCenter) {
   // set only if the running average is not within 1 degree of the current position
   _currentRudderPosition = position();
   if(averagedPosition > _currentRudderPosition + 1) {
-    if(isOff()){
-      Serial.print("Adjusting rudder RIGHT to: "); Serial.println(averagedPosition);
-    }
+    Serial.println("Rudder right");
     on();
     _power->rudderBrake(false);
     _power->rudderDirectionForward(false);
     analogWrite(SPEED_SET_PIN, 255);
   } else if (averagedPosition < _currentRudderPosition - 1) {
-    if(isOff()) {
-      Serial.print("Adjusting rudder LEFT to: "); Serial.println(averagedPosition);
-    }
+    Serial.println("Rudder left");
     on();
     _power->rudderBrake(false);
     _power->rudderDirectionForward(true);

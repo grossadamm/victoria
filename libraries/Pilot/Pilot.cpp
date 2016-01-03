@@ -4,7 +4,6 @@
 #include "Sensors.h"
 #include "Communications.h"
 #include "LowPower.h"
-#include "MemoryFree.h"
 #include "Time.h"
 
 Pilot::Pilot()

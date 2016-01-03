@@ -13,7 +13,6 @@ ControlMessage::ControlMessage(char message[32]) {
 
 ControlMessage::~ControlMessage() {
   delete[] _message;
-  // delete[] _currentCommand.data;
 }
 
 void ControlMessage::setNextEndIndex() {

@@ -150,7 +150,7 @@ float Navigation::currentHeading() {
     heading = FAKE_HEADING;
   #else
     sensors_event_t event; 
-    _mag.getEvent(&event);
+    _mag.getEvent(&event); // TODO this is blocking. maybe verify the device is available first?
     // Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
     // Calculate heading when the magnetometer is level, then correct for signs of axis.
     heading = atan2(event.magnetic.y, event.magnetic.x);
