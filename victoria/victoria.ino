@@ -1,3 +1,5 @@
+#include <MemoryFree.h>
+
 // Pilot
 #include <Power.h>
 #include <Drive.h>

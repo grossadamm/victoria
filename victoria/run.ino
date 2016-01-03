@@ -54,7 +54,11 @@ void loop()
     Serial.print("Took too long to run this loop! ");
     Serial.print(diff);
     Serial.println("ms");
+    Serial.print("freeMemory()=");
+    Serial.println(freeMemory());
   }
+//  Serial.print("freeMemory()=");
+//    Serial.println(freeMemory());
 }
 
 bool ISBDCallback()

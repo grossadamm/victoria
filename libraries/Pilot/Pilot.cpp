@@ -4,7 +4,7 @@
 #include "Sensors.h"
 #include "Communications.h"
 #include "LowPower.h"
-
+#include "MemoryFree.h"
 #include "Time.h"
 
 Pilot::Pilot()
@@ -88,12 +88,13 @@ void Pilot::manageComms() {
 
 void Pilot::processCommsData() {
   Command cmd = _comms->readControlData();
-  // Serial.print("New command: ");
-  // Serial.println(cmd.command);
-  // Serial.print("New data: ");
-  // Serial.println(cmd.data);
+  Serial.print("New command: ");
+  Serial.println(cmd.command);
+  Serial.print("New data: ");
+  Serial.println(cmd.data);
   if(cmd.command == '\'')
-    _lastManualControlData = {cmd.data[0], cmd.data[1]}; // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
+    bool foo = false;
+    // _lastManualControlData = {cmd.data[0], cmd.data[1]}; // ‘FL$ Forward/Reverse %, Left Right Center -90<->90
   else if(cmd.command == 'Z')
     _manualControl = true; // Z$ Manual control 
   else if(cmd.command == 'A')
@@ -109,7 +110,8 @@ void Pilot::processCommsData() {
   else if(cmd.command == 'O')
     bool foo = false;  // O**$ Override all waypoints
   else if(cmd.command == 'S')
-    smartSleep(cmd.data[0]*60);  // S**$ Sleep for x hours
+    bool foo = false;
+    // smartSleep(cmd.data[0]*60);  // S**$ Sleep for x hours
   else if(cmd.command == 'U')
     bool foo = false;  // U**$ Update every x hours
   else if(cmd.command == 'C')

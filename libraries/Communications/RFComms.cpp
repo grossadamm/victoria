@@ -62,7 +62,7 @@ boolean RFComms::sendMessage(byte message[50]){
   // }
   // Serial.println(".");
   int result = _radio->write( &buffer, sizeof(buffer) );
-
+  
   _radio->startListening();
   return result == 0;  
 }

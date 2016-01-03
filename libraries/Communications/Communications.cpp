@@ -3,6 +3,7 @@
 #include "Wire.h"
 #include "DS1307RTC.h"
 #include "Message.h"
+#include "MemoryFree.h"
 
 const PROGMEM int DAY_LAST_COMMUNICATED_POSITION = 1;
 
@@ -23,13 +24,12 @@ void Communications::buildMessage(byte message[50])
   for(int i = 0; i < 50; i++) {
     message[i] = 0;
   }
-  Message* msg = new Message(message);
+  Message msg = Message(message);
   Temperatures temps = _sensors->retrieveTemperatures();
-  msg->applyTemperatures(temps.water, temps.air, temps.internal, temps.battery);
-  msg->applyLightening(5);
-  msg->applyAttempts(0);
-  msg->applyCoordinates(_nav->lat(), _nav->lng());
-  // msg->print();
+  msg.applyTemperatures(temps.water, temps.air, temps.internal, temps.battery);
+  msg.applyLightening(5);
+  msg.applyAttempts(0);
+  msg.applyCoordinates(_nav->lat(), _nav->lng());
 }
 
 boolean Communications::useGps() {
@@ -46,11 +46,14 @@ boolean Communications::needToCommunicate() {
 
 boolean Communications::sendMessage(byte message[50]){
   _needToCommunicateOverride = false;
+  bool result;
   if(_rfComms->isOn()) {
-    return _rfComms->sendMessage(message);
+    result = _rfComms->sendMessage(message);
   } else {
-    return _gpsComms->sendMessage(message);
+    result = _gpsComms->sendMessage(message);
   }
+  // delete[] message;
+  return result;
 }
 
 boolean Communications::controlDataAvailable() {
@@ -59,7 +62,8 @@ boolean Communications::controlDataAvailable() {
 
 Command Communications::readControlData() {
   if(_lastControlMessage->commandsAvailable()) {
-    return _lastControlMessage->getCommand();
+    Command tmp =  _lastControlMessage->getCommand();
+    return tmp;
   }
 
   if(useGps()) {
@@ -67,13 +71,16 @@ Command Communications::readControlData() {
   } else {
     char buffer[32] = {0};
     _rfComms->readMessage(buffer);
+    Serial.println("-------------------------");
     Serial.print("ControlData Received: ");
     Serial.println(buffer);
+    _lastControlMessage->~ControlMessage();
     _lastControlMessage = new ControlMessage(buffer);
   }
 
   if(_lastControlMessage->commandsAvailable()) {
-    return _lastControlMessage->getCommand();
+    Command tmp =  _lastControlMessage->getCommand();
+    return tmp;
   }
 }
 
