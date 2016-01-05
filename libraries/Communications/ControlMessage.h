@@ -14,9 +14,11 @@ class ControlMessage
   private:
     void setNextEndIndex();
     char _message[32];
+    char *_messageContinues;
     Command _currentCommand;
     int _startIndex;
     int _endIndex;
+    bool _first;
 };
 
 #endif

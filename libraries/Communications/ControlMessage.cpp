@@ -6,9 +6,7 @@ ControlMessage::ControlMessage(char message[32]) {
   for(int i = 0; i < 32; i++) {
     _message[i] = message[i];
   }
-  _startIndex = 0;
-  _endIndex = 0;
-  setNextEndIndex();
+  _first = true;
 }
 
 ControlMessage::~ControlMessage() {
@@ -16,43 +14,28 @@ ControlMessage::~ControlMessage() {
 }
 
 void ControlMessage::setNextEndIndex() {
-  int startedAt = _endIndex;
-  for(int i = _startIndex+1; i<32; i++){
-    if(_message[i] == COMMAND_END_CHAR) {
-      _endIndex = i;
-      break;
-    }
-  }
-  if(startedAt == _endIndex) {
-    _startIndex = 33;
-    _endIndex = _startIndex;
-  }
+  
 }
 
 bool ControlMessage::commandsAvailable() {
-  if(_endIndex != _startIndex) 
-    return true;
-  return false;
+  if(_first){
+    _messageContinues = strtok(_message, "$");
+    _first = false;
+  } else {
+    _messageContinues = strtok(NULL, "$");  
+  }
+  return _messageContinues != NULL;
 }
 
 Command ControlMessage::getCommand() {
-  char* data = new char[_endIndex - _startIndex];
-  char command = _message[_startIndex];
-
-  int dataCounter = 0;
-  for(int i = _startIndex + 1; i<_endIndex; i++) {
-    data[dataCounter] = _message[i];
-    dataCounter++;
+  char *data = new char[sizeof(_messageContinues) - 1];
+  Command command;
+  command.command = _messageContinues[0];
+  command.data = data;
+  for(int i = 0; i<sizeof(_messageContinues); i++){
+    command.data[i] = _messageContinues[i+1];
   }
-
-  _currentCommand.command = command;
-  _currentCommand.data = data;
-  if(data)
-    delete[] data;
-
-  _startIndex = _endIndex + 1;
-  setNextEndIndex();
-  return _currentCommand;
+  return command;
 }
 
 // void ControlMessage::getCurrentCommandData() {}

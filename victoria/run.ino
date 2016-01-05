@@ -57,8 +57,6 @@ void loop()
     Serial.print("freeMemory()=");
     Serial.println(freeMemory());
   }
-//  Serial.print("freeMemory()=");
-//    Serial.println(freeMemory());
 }
 
 bool ISBDCallback()

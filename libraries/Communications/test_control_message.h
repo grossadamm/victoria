@@ -2,7 +2,7 @@
 
 test(ControlMessage_fetch) 
 {
-  char m[5] = { 'P', '1', '1', '$', 0 };
+  char m[5] = { 'P', 'a', 'b', '$', 0 };
   ControlMessage* cm = new ControlMessage(m);
   assertEqual(1, cm->commandsAvailable());
   Command foo = cm->getCommand();

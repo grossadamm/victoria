@@ -21,13 +21,14 @@ test(Message_temps)
   byte m[50] = {0};
   Message* msg = new Message(m);
   Temperatures temps = {32,33,34,35};
-  msg->applyTemperatures(temps);
+  msg->applyTemperatures(temps.water, temps.air, temps.internal, temps.battery);
 
-  Temperatures readTemps = msg->readTemperatures();
-  assertEqual(temps.water, readTemps.water);
-  assertEqual(temps.air, readTemps.air);
-  assertEqual(temps.internal, readTemps.internal);
-  assertEqual(temps.battery, readTemps.battery);
+  float readTemps[4];
+  msg->readTemperatures(readTemps);
+  assertEqual(temps.water, readTemps[0]);
+  assertEqual(temps.air, readTemps[1]);
+  assertEqual(temps.internal, readTemps[2]);
+  assertEqual(temps.battery, readTemps[3]);
 }
 
 test(Message_ligthtening) 

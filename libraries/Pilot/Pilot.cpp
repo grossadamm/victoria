@@ -123,6 +123,7 @@ void Pilot::processCommsData() {
   } else {
     Serial.println("Invalid command received");
   }
+  delete[] cmd.data;
 }
 
 void Pilot::manual() {

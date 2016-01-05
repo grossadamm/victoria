@@ -15,7 +15,7 @@ const PROGMEM double FAKE_LAT = 51.5034070;
 const PROGMEM double FAKE_LONG =  -0.1275920;
 const PROGMEM float FAKE_HEADING =  90;
 
- // #define USE_FAKE_LOCATION 1
+#define USE_FAKE_LOCATION 1
 // The serial connection to the GPS device
 
 Navigation::Navigation(Sensors* sensors, Storage* storage, Power* power)
