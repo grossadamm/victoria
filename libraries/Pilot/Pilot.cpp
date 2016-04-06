@@ -13,7 +13,7 @@ Pilot::Pilot()
   _sensors = new Sensors(_power);
   _nav = new Navigation(_sensors, _storage, _power);
   _comms = new Communications(_nav, _sensors, _power, _storage);
-  _drive = new Drive(_power);
+  _drive = new Drive(_power, _storage);
   _lastManualControlData = {0, 0}; // zero speed and zero rudder turn
   _manualControl = false;
   _insideISBD = false;
@@ -105,18 +105,17 @@ void Pilot::processCommsData() {
   else if(cmd.command == 'D')
     _comms->disableRF();// D$ Disable receiver
   else if(cmd.command == 'N')
-    bool foo = false;  // N**$ Override next waypoint
+    _nav->pushNewWaypoint(cmd.data); // N**$ Override next waypoint
   else if(cmd.command == 'O')
-    bool foo = false;  // O**$ Override all waypoints
+    _nav->setWaypoints(cmd.data);  // O**$ Override all waypoints
   else if(cmd.command == 'S')
-    bool foo = false;
-    // smartSleep(cmd.data[0]*60);  // S**$ Sleep for x hours
+    smartSleep(cmd.data[0]*60);  // S**$ Sleep for x hours
   else if(cmd.command == 'U')
-    bool foo = false;  // U**$ Update every x hours
+    _storage->communicationIntervalDays(cmd.data);  // U**$ Update every x days
   else if(cmd.command == 'C')
     bool foo = false;  // C**$ Check for messages every x hours
   else if(cmd.command == 'T')
-    bool foo = false;  // T**$ Run test every x motor runs
+    _storage->motorTestRunFrequency(cmd.data);  // T**$ Run test every x motor runs
   else if(cmd.command == 'P') {
     // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
     // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)

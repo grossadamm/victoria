@@ -51,7 +51,6 @@ boolean Communications::sendMessage(byte message[50]){
   } else {
     result = _gpsComms->sendMessage(message);
   }
-  // delete[] message;
   return result;
 }
 

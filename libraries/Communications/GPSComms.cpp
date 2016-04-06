@@ -19,8 +19,15 @@ GPSComms::GPSComms(Power* power, Storage* storage)
 }
 
 boolean GPSComms::needToCommunicate()
-{  
-  if(hour()>=18 && !communicatedToday()) {
+{
+  if(hour()<18 || communicatedToday()) {
+    return false;
+  }
+  int daysSinceCommunicated = day() - _storage->lastCommunicatedOn();
+  if(daysSinceCommunicated < 0) {
+    daysSinceCommunicated = _storage->lastCommunicatedOn() - day();
+  }
+  if(daysSinceCommunicated >= _storage->communicationIntervalDays()) {
     return true;
   } else {
     return false;

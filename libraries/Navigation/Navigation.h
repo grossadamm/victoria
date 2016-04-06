@@ -20,6 +20,7 @@ class Navigation
     double lat();
     double lng();
     byte CRC8(const byte *data, byte len);
+    void pushNewWaypoint(Waypoint waypoint);
   private:
     boolean validateWaypoint(Waypoint waypoint);
     boolean compareWaypoints(Waypoint wp1, Waypoint wp2);

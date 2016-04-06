@@ -4,11 +4,12 @@
 #include "Arduino.h"
 #include "Navigation.h"
 #include "Rudder.h"
+#include "Storage.h"
 
 class Drive
 {
   public:
-    Drive(Power* power);
+    Drive(Power* power, Storage* storage);
     void on();
     void off();
     void attemptClear();
@@ -26,8 +27,10 @@ class Drive
     int _mainDrive;
     int _leftDrive;
     int _rightDrive;
+    int runCount;
     Rudder* _rudder;
     Power* _power;
+    Storage* _storage;
     boolean _on;
 };
 

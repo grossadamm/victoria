@@ -4,13 +4,15 @@
 const PROGMEM int MAIN_DRIVE_MIN_POWER = 20;
 const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
-Drive::Drive(Power* power)
+Drive::Drive(Power* power, Storage* storage)
 {
   _on = false;
   _power = power;
+  _storage = storage;
   _useMainDrive = true;
   _useRudder = true;
   _useSecondaryDrive = false;
+  _runCount = 0;
   _rudder = new Rudder(power);
 }
 
@@ -25,7 +27,11 @@ void Drive::off()
 void Drive::on()
 {
   if(isOff()) {
-    attemptClear();
+    _runCount++;
+    if(_runCount > _storage->motorTestRunFrequency()){
+      attemptClear();
+      _runCount = 0;
+    }
     if(_useRudder)
       _rudder->on();
     if(_useMainDrive){

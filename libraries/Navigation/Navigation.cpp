@@ -55,6 +55,10 @@ void Navigation::resetWaypoints() {
   waypoints[3] = {25, -128, 70};
   waypoints[4] = {13, -172, 70};
 
+  setWaypoints(waypoints);
+}
+
+void Navigation::setWaypoints(Waypoint waypoints[]) {
   _storage->SetWaypointCount(0);
   Waypoint waypoint;
   for(int i = 0; i < sizeof(waypoints); i++){
@@ -67,6 +71,20 @@ Waypoint Navigation::setWaypointChecksum(Waypoint waypoint){
   waypoint.checksum = 0;
   byte waypointChecksum = CRC8((byte *) &waypoint, sizeof(waypoint));
   waypoint.checksum = waypointChecksum;
+}
+
+void Navigation::pushNewWaypoint(Waypoint waypoint) {
+  shiftWaypointsBackward();
+  _storage->StoreWaypoint(waypoint, 0);
+  _currentWaypoint = waypoint;
+}
+
+void Navigation::shiftWaypointsBackward() {
+  // handle overflow
+  int numberOfWaypoints = _storage->ReadWaypointCount() + 1;
+  for(int i = 0; i < numberOfWaypoints; i++){
+    _storage->StoreWaypoint(_storage->RetrieveWaypoint(i), i+1);
+  }
 }
 
 void Navigation::shiftWaypointsForward()
