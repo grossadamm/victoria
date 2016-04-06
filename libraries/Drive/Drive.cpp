@@ -80,7 +80,7 @@ void Drive::currentExceeded() {
   if(_useMainDrive) {
     _useMainDrive = false;
     _useSecondaryDrive = true;
-  } else {
+  } else { // TODO handle separate secondary drives
     _useMainDrive = true;
     _useSecondaryDrive = false;
   }
@@ -104,4 +104,23 @@ void Drive::turnSecondaryDrive(int leftRightCenter) {
 
 void Drive::speed(int percent) { // positive negative for forward/reverse
   // TODO do nothing for now
+}
+
+void mainDrive(bool onOff) {
+  _useMainDrive = onOff;
+  _power->mainDrive(onOff);
+}
+
+void secondaryDrive(bool onOff) {
+  _useSecondaryDrive = onOff;
+  _power->secondaryDrive(onOff);
+}
+
+void rudder(bool onOff) {
+  _useRudder = onOff;
+  if(onOff){
+    _rudder->on();
+  } else {
+    _rudder->off();
+  }
 }

@@ -117,6 +117,13 @@ void Pilot::processCommsData() {
   else if(cmd.command == 'T')
     _storage->motorTestRunFrequency(cmd.data);  // T**$ Run test every x motor runs
   else if(cmd.command == 'P') {
+    if(cmd.data[0] == 1) {
+      _drive->mainDrive(cmd.data[1]==1;
+    } else if(cmd.data[0] == 2) {
+      _drive->secondaryDrive(cmd.data[1]==1;
+    } else if(cmd.data[0] == 3) {
+      _drive->rudder(cmd.data[1]==1;
+    }
     // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
     // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
   } else {

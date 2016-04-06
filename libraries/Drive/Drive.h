@@ -18,6 +18,9 @@ class Drive
     boolean isOn();
     boolean isOff();
     void speed(int percent);
+    void mainDrive(bool onOff);
+    void secondaryDrive(bool onOff);
+    void rudder(bool onOff);
   private:
     void turnRudder(int leftRightCenter);
     void turnSecondaryDrive(int leftRightCenter);
