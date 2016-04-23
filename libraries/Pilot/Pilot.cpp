@@ -160,7 +160,7 @@ void Pilot::smartSleep(int minutes) {
     // set sleep mode
     // sleep for 8 seconds at a time until minutes reached
     // power up rtc
-    _power->rtc(false);
+    _power->killAllButLights();
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF); 
     _power->rtc(true);
     secondsSlept = secondsSlept + 8;

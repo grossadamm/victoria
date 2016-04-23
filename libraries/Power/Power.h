@@ -9,6 +9,7 @@ class Power
     Power();
     void gps(boolean onOff);
     void gpsComms(boolean onOff);
+    void lights(boolean onOff);
     void mainDrive(boolean onOff);
     void rfComms(boolean onOff);
     void rtc(boolean onOff);
@@ -17,6 +18,8 @@ class Power
     void rudderBrake(boolean onOff);
     void secondaryDrive(boolean onOff);
     void temps(boolean onOff);
+
+    void killAllButLights();
 };
 
 #endif
