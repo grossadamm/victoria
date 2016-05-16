@@ -20,6 +20,7 @@ GPSComms::GPSComms(Power* power, Storage* storage)
 
 boolean GPSComms::needToCommunicate()
 {
+  return false;
   if(hour()<18 || communicatedToday()) {
     return false;
   }

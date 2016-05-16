@@ -5,11 +5,12 @@
 #include "Navigation.h"
 #include "Rudder.h"
 #include "Storage.h"
+#include "Sensors.h"
 
 class Drive
 {
   public:
-    Drive(Power* power, Storage* storage);
+    Drive(Power* power, Storage* storage, Sensors* sensors);
     void on();
     void off();
     void attemptClear();
@@ -30,7 +31,7 @@ class Drive
     int _mainDrive;
     int _leftDrive;
     int _rightDrive;
-    int runCount;
+    int _runCount;
     Rudder* _rudder;
     Power* _power;
     Storage* _storage;

@@ -68,6 +68,7 @@ boolean RFComms::sendMessage(byte message[50]){
 }
 
 boolean RFComms::dataAvailable() {
+  return false;
   return _radio->available();
 }
 

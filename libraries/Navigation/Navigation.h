@@ -21,10 +21,12 @@ class Navigation
     double lng();
     byte CRC8(const byte *data, byte len);
     void pushNewWaypoint(Waypoint waypoint);
+    void setWaypoints(Waypoint *waypoints);
   private:
     boolean validateWaypoint(Waypoint waypoint);
     boolean compareWaypoints(Waypoint wp1, Waypoint wp2);
     void shiftWaypointsForward();
+    void shiftWaypointsBackward();
     TinyGPSPlus _gps;
     Sensors* _sensors;
     Storage* _storage;

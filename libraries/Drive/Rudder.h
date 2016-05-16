@@ -5,11 +5,12 @@
 #include "Power.h"
 #include "RunningAverage.h"
 #include "Encoder.h"
+#include "Sensors.h"
 
 class Rudder
 {
   public:
-    Rudder(Power* power);
+    Rudder(Power* power, Sensors* sensors);
     void attemptClear();
     void set(int leftRightCenter);
     int calculateRequiredPosition(int leftRightCenter);
@@ -23,10 +24,13 @@ class Rudder
     boolean _on;
     int _startCounts;
     void setStartPosition();
+    void left();
+    void right();
     RunningAverage* _rudderSets;
     int _currentRudderPosition;
     Encoder* _encoder;
     Power* _power;
+    Sensors* _sensors;
 };
 
 #endif

@@ -1,20 +1,39 @@
 #include "Rudder.h"
+#include "Sensors.h"
 
 const PROGMEM int MAX_RUDDER_TURN_DEGREES = 30;
 const PROGMEM int SPEED_SET_PIN = 3;
 const PROGMEM int ENCODER_PIN_A = 18;
 const PROGMEM int ENCODER_PIN_B = 19;
+const PROGMEM int VOLTAGE_PIN = 0;
 
-Rudder::Rudder(Power* power)
+const PROGMEM int POSITION_SET_ACCURACY = 10;
+
+Rudder::Rudder(Power* power, Sensors* sensors)
 {
   _on = false;
   _startCounts = 0;
   _power = power;
+  _sensors = sensors;
   _rudderSets = new RunningAverage(30);
   _rudderSets->clear();
   _encoder = new Encoder(ENCODER_PIN_A, ENCODER_PIN_B);
   _encoder->write(0);
   setStartPosition();
+}
+
+void Rudder::left() {
+  on();
+  _power->rudderBrake(false);
+  _power->rudderDirectionForward(true);
+  analogWrite(SPEED_SET_PIN, 255);
+}
+
+void Rudder::right() {
+  on();
+  _power->rudderBrake(false);
+  _power->rudderDirectionForward(false);
+  analogWrite(SPEED_SET_PIN, 255);
 }
 
 void Rudder::set(int leftRightCenter) { 
@@ -23,17 +42,9 @@ void Rudder::set(int leftRightCenter) {
   // set only if the running average is not within 1 degree of the current position
   _currentRudderPosition = position();
   if(averagedPosition > _currentRudderPosition + 1) {
-    // Serial.println("Rudder right");
-    on();
-    _power->rudderBrake(false);
-    _power->rudderDirectionForward(false);
-    analogWrite(SPEED_SET_PIN, 255);
+    right();
   } else if (averagedPosition < _currentRudderPosition - 1) {
-    // Serial.println("Rudder left");
-    on();
-    _power->rudderBrake(false);
-    _power->rudderDirectionForward(true);
-    analogWrite(SPEED_SET_PIN, 255);
+    left();
   } else {
     if(isOn())
       Serial.println("Rudder ok");
@@ -95,10 +106,56 @@ int Rudder::calculateRequiredPosition(int leftRightCenter) {
 }
 
 void Rudder::setStartPosition() {
-  // power stuff off
-  // move left as far as possible
-  // set counts to that spot
-  // move right as far as possible
-  // verify counts close
-  // move to 0 position
+  time_t futureTime = 0;
+  int startPosition =  _encoder->read();
+  int leftPosition = 0;
+  int rightPosition = 0;
+  int middlePosition = 0;
+  // _power->killAllButLights();
+  // _power->rudderBrake(false);
+  // on();
+  // run left until against left block or 5 seconds whichever comes first
+  on();
+  int position = 0;
+
+  left();
+  do {
+    position = _encoder->read();
+    delay(10);
+  } while(abs(position - _encoder->read()) > POSITION_SET_ACCURACY && !_sensors->timeout(futureTime, 5));
+  leftPosition = position;
+
+  // run right until against right block or 10 seconds whichever comes first
+  futureTime = 0;
+  right();
+  do {
+    position = _encoder->read();
+    delay(10);
+  } while(abs(position - _encoder->read()) > POSITION_SET_ACCURACY && !_sensors->timeout(futureTime, 10));
+  rightPosition = position;
+
+  // calculate middle encoder position
+  int positionDifference = rightPosition - leftPosition;
+  if(positionDifference > 0) {
+    middlePosition = leftPosition + (positionDifference/2);
+  } else {
+    middlePosition = rightPosition + (positionDifference/2);
+  }
+  
+  // move back left until within 10 points of the middle position or have moved past the middle position
+  futureTime = 0;
+  left();
+  do {
+    delay(1);
+    position = _encoder->read();
+    if(positionDifference > 0) {
+      if(abs(position - middlePosition) < POSITION_SET_ACCURACY || position < middlePosition) {
+        break;
+      }
+    } else {
+      if(abs(position - middlePosition) < POSITION_SET_ACCURACY || position > middlePosition) {
+        break;
+      }
+    }
+  } while(!_sensors->timeout(futureTime, 15)); // attempt to get back to middle for at most 15 seconds
 }

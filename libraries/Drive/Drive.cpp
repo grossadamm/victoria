@@ -1,10 +1,11 @@
 #include "Drive.h"
 #include "Rudder.h"
+#include "Sensors.h"
 
 const PROGMEM int MAIN_DRIVE_MIN_POWER = 20;
 const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
-Drive::Drive(Power* power, Storage* storage)
+Drive::Drive(Power* power, Storage* storage, Sensors* sensors)
 {
   _on = false;
   _power = power;
@@ -13,7 +14,7 @@ Drive::Drive(Power* power, Storage* storage)
   _useRudder = true;
   _useSecondaryDrive = false;
   _runCount = 0;
-  _rudder = new Rudder(power);
+  _rudder = new Rudder(power, sensors);
 }
 
 void Drive::off()
@@ -106,17 +107,17 @@ void Drive::speed(int percent) { // positive negative for forward/reverse
   // TODO do nothing for now
 }
 
-void mainDrive(bool onOff) {
+void Drive::mainDrive(bool onOff) {
   _useMainDrive = onOff;
   _power->mainDrive(onOff);
 }
 
-void secondaryDrive(bool onOff) {
+void Drive::secondaryDrive(bool onOff) {
   _useSecondaryDrive = onOff;
   _power->secondaryDrive(onOff);
 }
 
-void rudder(bool onOff) {
+void Drive::rudder(bool onOff) {
   _useRudder = onOff;
   if(onOff){
     _rudder->on();
