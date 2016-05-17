@@ -9,5 +9,5 @@ before_install:
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
   - sudo ln -s /usr/local/share/arduino/arduino-builder /usr/local/bin/arduino-builder
 script:
-  - arduino-builder -verbose -hardware /usr/local/share/arduino/hardware -tools /usr/local/share/arduino/hardware/tools/avr -tools /usr/local/share/arduino/tools-builder -libraries /usr/local/share/arduino/libraries -libraries $PWD/libraries/ -fqbn arduino:avr:mega:cpu=atmega2560 $PWD/victoria/run.ino
+  - arduino-builder -verbose -hardware /usr/local/share/arduino/hardware -tools /usr/local/share/arduino/hardware/tools/avr -tools /usr/local/share/arduino/tools-builder -libraries /usr/local/share/arduino/libraries -libraries $PWD/libraries/ -fqbn arduino:avr:mega:cpu=atmega2560 $PWD/victoria/victoria.ino
   - arduino-builder -hardware /usr/local/share/arduino/hardware -tools /usr/local/share/arduino/hardware/tools/avr -tools /usr/local/share/arduino/tools-builder -libraries /usr/local/share/arduino/libraries -libraries $PWD/libraries/ -fqbn arduino:avr:mega:cpu=atmega2560 $PWD/victoria/test.ino
