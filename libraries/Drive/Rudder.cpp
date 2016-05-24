@@ -76,11 +76,13 @@ void Rudder::off()
 void Rudder::on()
 {
   if(isOff()) {
+    if(_startCounts == 0) {
+      setStartPosition();
+    }
     _startCounts++;
     _power->rudder(true);
     if(_startCounts > MAX_RUDDER_STARTS_BEFORE_CALIBRATION) {
       _startCounts = 0;
-      setStartPosition();
     }
   }
   // turn on
