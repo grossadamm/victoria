@@ -2,6 +2,8 @@
 #include "Sensors.h"
 
 const PROGMEM int MAX_RUDDER_TURN_DEGREES = 30;
+const PROGMEM int MAX_RUDDER_STARTS_BEFORE_CALIBRATION = 500;
+const PROGMEM int ENCODER_COUNTS_PER_DEGREE = 350;
 const PROGMEM int SPEED_SET_PIN = 3;
 const PROGMEM int ENCODER_PIN_A = 18;
 const PROGMEM int ENCODER_PIN_B = 19;
@@ -29,6 +31,11 @@ void Rudder::left() {
   analogWrite(SPEED_SET_PIN, 255);
 }
 
+void Rudder::leftOneDegree() {
+  left();
+  oneDegree();
+}
+
 void Rudder::right() {
   on();
   _power->rudderBrake(false);
@@ -37,23 +44,27 @@ void Rudder::right() {
 }
 
 void Rudder::set(int leftRightCenter) { 
-  int averagedPosition = calculateRequiredPosition(leftRightCenter);
+  //start moving the right way
+  int desiredPosition = smoothLeftRightCenter(leftRightCenter);
+  int currentPosition = position();
 
   // set only if the running average is not within 1 degree of the current position
-  _currentRudderPosition = position();
-  if(averagedPosition > _currentRudderPosition + 1) {
+  if(desiredPosition > currentPosition + 1) {
     right();
-  } else if (averagedPosition < _currentRudderPosition - 1) {
+  } else if (desiredPosition < currentPosition - 1) {
     left();
   } else {
     if(isOn())
-      Serial.println("Rudder ok");
-    off();
-    _power->rudderBrake(true);
-    _power->rudderDirectionForward(false);
-    analogWrite(SPEED_SET_PIN, 0);
+      Serial.println("Rudder now set");
+    stop();
   }
   // TODO watch servo for stall
+}
+
+void Rudder::stop() {
+  _power->rudderBrake(true);
+  analogWrite(SPEED_SET_PIN, 0);
+  off();
 }
 
 void Rudder::off()
@@ -67,7 +78,7 @@ void Rudder::on()
   if(isOff()) {
     _startCounts++;
     _power->rudder(true);
-    if(_startCounts > 10) {
+    if(_startCounts > MAX_RUDDER_STARTS_BEFORE_CALIBRATION) {
       _startCounts = 0;
       setStartPosition();
     }
@@ -85,11 +96,12 @@ boolean Rudder::isOff() {
 }
 
 int Rudder::position() {
-  return _encoder->read()/350;
+  return (_encoder->read() - zeroPosition())/ENCODER_COUNTS_PER_DEGREE;
 }
 
-int Rudder::calculateRequiredPosition(int leftRightCenter) {
+int Rudder::smoothLeftRightCenter(int leftRightCenter) {
  int rudderTurn = 0;
+ int desiredLeftRightCenterPosition = 0;
   // left is negative
   // right is positive
 
@@ -105,6 +117,48 @@ int Rudder::calculateRequiredPosition(int leftRightCenter) {
   return _rudderSets->getAverage();
 }
 
+void Rudder::zeroPosition(int encoderPosition) {
+  _storage->rudderZeroPosition(encoderPosition);
+  _zeroPosition = encoderPosition;
+}
+
+void Rudder::zeroPosition() {
+  if(_zeroPosition == 0) {
+    _zeroPosition = _storage->rudderZeroPosition()
+  }
+  return _zeroPosition;
+}
+
+void Rudder::waitForEncoderPosition(int desiredEncoderPosition, int timeout) {
+  int previousPosition = _encoder->read();
+  int position = previousPosition;
+  time_t futureTime = 0;
+  do {
+    delay(10);
+    position = _encoder->read();
+  } while(
+    positionWithinAccuracy(position, desiredEncoderPosition) &&
+    movingCloser(previousPosition, position, desiredEncoderPosition) &&
+   !_sensors->timeout(futureTime, timeout));
+}
+
+bool Rudder::currentPositionWithinAccuracy(int currentPosition, int desiredPosition) {
+  return abs(encoderPosition - currentPosition) < POSITION_SET_ACCURACY;
+}
+
+bool Rudder::movingCloser(int previousPosition, int currentPosition, int desiredPosition) {
+  int previousDifference = abs(previousPosition - desiredPosition);
+  int currentDifference = abs(currentPosition - desiredPosition);
+  if(previousPosition > currentDifference) {
+    return true;
+  }
+  return false;
+}
+
+bool Rudder::stillMoving(int previousPosition, currentPosition) {
+  return abs(previousPosition - currentPosition) > POSITION_SET_ACCURACY;
+}
+
 void Rudder::setStartPosition() {
   time_t futureTime = 0;
   int startPosition =  _encoder->read();
@@ -113,7 +167,7 @@ void Rudder::setStartPosition() {
   int middlePosition = 0;
   // _power->killAllButLights();
   // _power->rudderBrake(false);
-  // on();
+
   // run left until against left block or 5 seconds whichever comes first
   on();
   int position = 0;
@@ -122,8 +176,9 @@ void Rudder::setStartPosition() {
   do {
     position = _encoder->read();
     delay(10);
-  } while(abs(position - _encoder->read()) > POSITION_SET_ACCURACY && !_sensors->timeout(futureTime, 5));
+  } while(stillMoving(position, _encoder->read()) && !_sensors->timeout(futureTime, 5));
   leftPosition = position;
+  stop();
 
   // run right until against right block or 10 seconds whichever comes first
   futureTime = 0;
@@ -131,8 +186,9 @@ void Rudder::setStartPosition() {
   do {
     position = _encoder->read();
     delay(10);
-  } while(abs(position - _encoder->read()) > POSITION_SET_ACCURACY && !_sensors->timeout(futureTime, 10));
+  } while(stillMoving(position, _encoder->read()) && !_sensors->timeout(futureTime, 10));
   rightPosition = position;
+  stop();
 
   // calculate middle encoder position
   int positionDifference = rightPosition - leftPosition;
@@ -141,6 +197,8 @@ void Rudder::setStartPosition() {
   } else {
     middlePosition = rightPosition + (positionDifference/2);
   }
+
+  zeroPosition(middlePosition);
   
   // move back left until within 10 points of the middle position or have moved past the middle position
   futureTime = 0;
@@ -158,4 +216,5 @@ void Rudder::setStartPosition() {
       }
     }
   } while(!_sensors->timeout(futureTime, 15)); // attempt to get back to middle for at most 15 seconds
+  stop();
 }

@@ -28,6 +28,7 @@ class Rudder
     void right();
     RunningAverage* _rudderSets;
     int _currentRudderPosition;
+    int _zeroRudderPosition;
     Encoder* _encoder;
     Power* _power;
     Sensors* _sensors;
