@@ -42,6 +42,14 @@ void Rudder::set(int leftRightCenter) {
   //start moving the right way
   int desiredPosition = smoothLeftRightCenter(leftRightCenter);
   int currentPosition = position();
+  int oldPosition = _currentRudderPosition;
+  _currentRudderPosition = _encoder->read();
+
+  if(isOn() && abs(oldPosition - _currentRudderPosition) < 10) {
+    // TODO stalled
+    off();
+    return;
+  }
 
   // set only if the running average is not within 1 degree of the current position
   if(desiredPosition > currentPosition + 1) {
@@ -53,7 +61,6 @@ void Rudder::set(int leftRightCenter) {
       Serial.println("Rudder now set");
     stop();
   }
-  // TODO watch servo for stall
 }
 
 void Rudder::stop() {
