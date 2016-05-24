@@ -129,32 +129,6 @@ void Rudder::zeroPosition() {
   return _zeroPosition;
 }
 
-void Rudder::waitForEncoderPosition(int desiredEncoderPosition, int timeout) {
-  int previousPosition = _encoder->read();
-  int position = previousPosition;
-  time_t futureTime = 0;
-  do {
-    delay(10);
-    position = _encoder->read();
-  } while(
-    positionWithinAccuracy(position, desiredEncoderPosition) &&
-    movingCloser(previousPosition, position, desiredEncoderPosition) &&
-   !_sensors->timeout(futureTime, timeout));
-}
-
-bool Rudder::currentPositionWithinAccuracy(int currentPosition, int desiredPosition) {
-  return abs(encoderPosition - currentPosition) < POSITION_SET_ACCURACY;
-}
-
-bool Rudder::movingCloser(int previousPosition, int currentPosition, int desiredPosition) {
-  int previousDifference = abs(previousPosition - desiredPosition);
-  int currentDifference = abs(currentPosition - desiredPosition);
-  if(previousPosition > currentDifference) {
-    return true;
-  }
-  return false;
-}
-
 bool Rudder::stillMoving(int previousPosition, currentPosition) {
   return abs(previousPosition - currentPosition) > POSITION_SET_ACCURACY;
 }
