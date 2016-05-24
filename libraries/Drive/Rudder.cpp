@@ -31,11 +31,6 @@ void Rudder::left() {
   analogWrite(SPEED_SET_PIN, 255);
 }
 
-void Rudder::leftOneDegree() {
-  left();
-  oneDegree();
-}
-
 void Rudder::right() {
   on();
   _power->rudderBrake(false);
