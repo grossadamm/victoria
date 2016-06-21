@@ -11,12 +11,13 @@ const PROGMEM int VOLTAGE_PIN = 0;
 
 const PROGMEM int POSITION_SET_ACCURACY = 10;
 
-Rudder::Rudder(Power* power, Sensors* sensors)
+Rudder::Rudder(Power* power, Sensors* sensors, Storage* storage)
 {
   _on = false;
   _startCounts = 0;
   _power = power;
   _sensors = sensors;
+  _storage = storage;
   _rudderSets = new RunningAverage(30);
   _rudderSets->clear();
   _encoder = new Encoder(ENCODER_PIN_A, ENCODER_PIN_B);
@@ -126,14 +127,14 @@ void Rudder::zeroPosition(int encoderPosition) {
   _zeroPosition = encoderPosition;
 }
 
-void Rudder::zeroPosition() {
+int Rudder::zeroPosition() {
   if(_zeroPosition == 0) {
-    _zeroPosition = _storage->rudderZeroPosition()
+    _zeroPosition = _storage->rudderZeroPosition();
   }
   return _zeroPosition;
 }
 
-bool Rudder::stillMoving(int previousPosition, currentPosition) {
+bool Rudder::stillMoving(int previousPosition, int currentPosition) {
   return abs(previousPosition - currentPosition) > POSITION_SET_ACCURACY;
 }
 

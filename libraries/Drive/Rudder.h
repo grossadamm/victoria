@@ -6,11 +6,12 @@
 #include "RunningAverage.h"
 #include "Encoder.h"
 #include "Sensors.h" 
+#include "Storage.h" 
 
 class Rudder
 {
   public:
-    Rudder(Power* power, Sensors* sensors);
+    Rudder(Power* power, Sensors* sensors, Storage* storage);
     void attemptClear();
     void set(int leftRightCenter);
     int calculateRequiredPosition(int leftRightCenter);
@@ -24,14 +25,20 @@ class Rudder
     boolean _on;
     int _startCounts;
     void setStartPosition();
+    int smoothLeftRightCenter(int leftRightCenter);
+    bool stillMoving(int previousPosition, int currentPosition);
     void left();
     void right();
+    void stop();
+    int zeroPosition();
+    void zeroPosition(int zeroPosition);
     RunningAverage* _rudderSets;
     int _currentRudderPosition;
-    int _zeroRudderPosition;
+    int _zeroPosition;
     Encoder* _encoder;
     Power* _power;
     Sensors* _sensors;
+    Storage* _storage;
 };
 
 #endif

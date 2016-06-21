@@ -14,7 +14,7 @@ Drive::Drive(Power* power, Storage* storage, Sensors* sensors)
   _useRudder = true;
   _useSecondaryDrive = false;
   _runCount = 0;
-  _rudder = new Rudder(power, sensors);
+  _rudder = new Rudder(power, sensors, storage);
 }
 
 void Drive::off()

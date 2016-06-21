@@ -26,6 +26,9 @@ class Storage
     void motorTestRunFrequency(int runsBetweenTest);
     int motorTestRunFrequency();
 
+    void rudderZeroPosition(int rudderZeroPosition);
+    int rudderZeroPosition();
+
     void AppendNewWaypoint(Waypoint waypoint);
     void StoreWaypoint(Waypoint waypoint, int waypointNumber);
     Waypoint RetrieveWaypoint(int waypointNumber);

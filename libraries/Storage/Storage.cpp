@@ -14,7 +14,8 @@ const PROGMEM int WAYPOINT_COUNT_STORAGE_POSITION = 1;
 const PROGMEM int DAY_LAST_COMMUNICATED_STORAGE_POSITION = 2;
 const PROGMEM int COMMUNICATION_INTERVAL_DAYS_POSITION = 3;
 const PROGMEM int MOTOR_TEST_RUN_FREQUENCY_POSITION = 4;
-const PROGMEM int WAYPOINT_STORAGE_POSITION = 5;
+const PROGMEM int RUDDER_ZERO_POSITION_POSITION = 5;
+const PROGMEM int WAYPOINT_STORAGE_POSITION = 6;
 
 void Storage::lastCommunicatedOn(int day) {
   EEPROM.write(DAY_LAST_COMMUNICATED_STORAGE_POSITION, (char) day);
@@ -38,6 +39,14 @@ void Storage::motorTestRunFrequency(int runsBetweenTest) {
 
 int Storage::motorTestRunFrequency() {
   (int) EEPROM.read(MOTOR_TEST_RUN_FREQUENCY_POSITION);
+}
+
+void Storage::rudderZeroPosition(int rudderZeroPosition) {
+  EEPROM.write(RUDDER_ZERO_POSITION_POSITION, (char) rudderZeroPosition);
+}
+
+int Storage::rudderZeroPosition() {
+  (int) EEPROM.read(RUDDER_ZERO_POSITION_POSITION);
 }
 
 // Waypoints
