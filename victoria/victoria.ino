@@ -1,3 +1,5 @@
+#include <pins.h>
+
 #include <MemoryFree.h>
 
 // Pilot
@@ -36,4 +38,3 @@
 
 // Sleep
 #include <LowPower.h>
-

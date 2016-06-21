@@ -1,12 +1,11 @@
 // #include "Arduino.h"
 #include "Power.h"
 #include "Arduino.h"
+#include "pins.h"
 
 const PROGMEM int RUDDER_BRAKE_ENABLE_PIN = 9;
 const PROGMEM int RUDDER_DIRECTION_PIN = 12;
-const PROGMEM int TEMP_MOSFET = 36;
-const PROGMEM int RTC_MOSFET = 23;
-const PROGMEM int GPS_MOSFET = 24;
+
 const PROGMEM int GPS_COMMS_MOSFET = 28; // NOT SURE
 const PROGMEM int RF_COMMS_MOSFET = 41; 
 const PROGMEM int RUDDER_MOSFET = 30;
