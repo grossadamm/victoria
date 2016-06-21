@@ -3,28 +3,18 @@
 #include "Arduino.h"
 #include "pins.h"
 
-const PROGMEM int RUDDER_BRAKE_ENABLE_PIN = 9;
-const PROGMEM int RUDDER_DIRECTION_PIN = 12;
-
-const PROGMEM int GPS_COMMS_MOSFET = 28; // NOT SURE
-const PROGMEM int RF_COMMS_MOSFET = 41; 
-const PROGMEM int RUDDER_MOSFET = 30;
-const PROGMEM int MAIN_DRIVE_MOSFET = 31;
-const PROGMEM int SECONDARY_DRIVE_MOSFET = 32;
-const PROGMEM int LIGHTS_MOSFET = 33;
-
 Power::Power()
 {
-  pinMode(RUDDER_BRAKE_ENABLE_PIN, OUTPUT);
-  pinMode(RUDDER_DIRECTION_PIN, OUTPUT);
+  pinMode(BRAKE_RUDDER___SHIELD, OUTPUT);
+  pinMode(FORWARD_RUDDER___SHIELD, OUTPUT);
   pinMode(TEMP_MOSFET, OUTPUT);
   pinMode(RTC_MOSFET, OUTPUT);
   pinMode(GPS_MOSFET, OUTPUT);
-  pinMode(GPS_COMMS_MOSFET, OUTPUT);
-  pinMode(LIGHTS_MOSFET, OUTPUT);
+  pinMode(GPSCOMMS_SLEEP_PIN, OUTPUT);
+  pinMode(LED_MOSFET, OUTPUT);
   pinMode(RUDDER_MOSFET, OUTPUT);
-  pinMode(MAIN_DRIVE_MOSFET, OUTPUT);
-  pinMode(SECONDARY_DRIVE_MOSFET, OUTPUT);
+  pinMode(CENTER_MOSFET, OUTPUT);
+  pinMode(LEFT_MOSFET, OUTPUT);
   
 }
 
@@ -33,23 +23,23 @@ void Power::gps(boolean onOff) {
 }
 
 void Power::gpsComms(boolean onOff) {
-  digitalWrite(GPS_COMMS_MOSFET, onOff ? HIGH : LOW);
+  digitalWrite(GPSCOMMS_SLEEP_PIN, onOff ? LOW : HIGH);
 }
 
 void Power::lights(boolean onOff) {
-  digitalWrite(LIGHTS_MOSFET, onOff ? HIGH : LOW);
+  digitalWrite(LED_MOSFET, onOff ? HIGH : LOW);
 }
 
 void Power::mainDrive(boolean onOff) {
-  digitalWrite(MAIN_DRIVE_MOSFET, onOff ? HIGH : LOW);
+  digitalWrite(CENTER_MOSFET, onOff ? HIGH : LOW);
 }
 
 void Power::secondaryDrive(boolean onOff) {
-  digitalWrite(SECONDARY_DRIVE_MOSFET, onOff ? HIGH : LOW);
+  digitalWrite(LEFT_MOSFET, onOff ? HIGH : LOW);
 }
 
 void Power::rfComms(boolean onOff) {
-  digitalWrite(RF_COMMS_MOSFET, onOff ? HIGH : LOW);
+  digitalWrite(RF_MOSFET, onOff ? HIGH : LOW);
 }
 
 void Power::rtc(boolean onOff) {
@@ -61,11 +51,11 @@ void Power::rudder(boolean onOff) {
 }
 
 void Power::rudderDirectionForward(boolean onOff) {
-  digitalWrite(RUDDER_DIRECTION_PIN, onOff ? HIGH : LOW);
+  digitalWrite(FORWARD_RUDDER___SHIELD, onOff ? HIGH : LOW);
 }
 
 void Power::rudderBrake(boolean onOff) {
-  digitalWrite(RUDDER_BRAKE_ENABLE_PIN, onOff ? HIGH : LOW);
+  digitalWrite(BRAKE_RUDDER___SHIELD, onOff ? HIGH : LOW);
 }
 
 void Power::temps(boolean onOff) {
