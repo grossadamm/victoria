@@ -1,14 +1,10 @@
 #include "Rudder.h"
 #include "Sensors.h"
+#include "pins.h"
 
 const PROGMEM int MAX_RUDDER_TURN_DEGREES = 30;
 const PROGMEM int MAX_RUDDER_STARTS_BEFORE_CALIBRATION = 500;
 const PROGMEM int ENCODER_COUNTS_PER_DEGREE = 350;
-const PROGMEM int SPEED_SET_PIN = 3;
-const PROGMEM int ENCODER_PIN_A = 18;
-const PROGMEM int ENCODER_PIN_B = 19;
-const PROGMEM int VOLTAGE_PIN = 0;
-
 const PROGMEM int POSITION_SET_ACCURACY = 10;
 
 Rudder::Rudder(Power* power, Sensors* sensors, Storage* storage)
@@ -20,7 +16,7 @@ Rudder::Rudder(Power* power, Sensors* sensors, Storage* storage)
   _storage = storage;
   _rudderSets = new RunningAverage(30);
   _rudderSets->clear();
-  _encoder = new Encoder(ENCODER_PIN_A, ENCODER_PIN_B);
+  _encoder = new Encoder(RUDDER_ENCODER___Serial1, RUDDER_ENCODER___Serial1_X);
   _encoder->write(0);
   setStartPosition();
 }
@@ -29,14 +25,14 @@ void Rudder::left() {
   on();
   _power->rudderBrake(false);
   _power->rudderDirectionForward(true);
-  analogWrite(SPEED_SET_PIN, 255);
+  analogWrite(RUDDER_PWM___SHIELD, 255);
 }
 
 void Rudder::right() {
   on();
   _power->rudderBrake(false);
   _power->rudderDirectionForward(false);
-  analogWrite(SPEED_SET_PIN, 255);
+  analogWrite(RUDDER_PWM___SHIELD, 255);
 }
 
 void Rudder::set(int leftRightCenter) { 
@@ -66,7 +62,7 @@ void Rudder::set(int leftRightCenter) {
 
 void Rudder::stop() {
   _power->rudderBrake(true);
-  analogWrite(SPEED_SET_PIN, 0);
+  analogWrite(RUDDER_PWM___SHIELD, 0);
   off();
 }
 
@@ -79,6 +75,9 @@ void Rudder::off()
 void Rudder::on()
 {
   if(isOff()) {
+    _power->rudder(true);
+    _on = true;
+    
     if(_startCounts == 0) {
       setStartPosition();
     }
@@ -88,8 +87,6 @@ void Rudder::on()
       _startCounts = 0;
     }
   }
-  // turn on
-  _on = true;
 }
 
 boolean Rudder::isOn() {
