@@ -38,20 +38,20 @@ void Rudder::right() {
 void Rudder::set(int leftRightCenter) { 
   //start moving the right way
   int desiredDegreesOffCenter = smoothLeftRightCenter(leftRightCenter);
-  int degreesOffCenter = degreesOffCenter();
+  int currentDegreesOffCenter = degreesOffCenter();
   int oldPosition = _currentRudderPosition;
   _currentRudderPosition = _encoder->read();
 
   if(isOn() && abs(oldPosition - _currentRudderPosition) < 10) {
-    _stalled = true
+    _stalled = true;
     off();
     return;
   }
 
   // set only if the running average is not within 1 degree of the current position
-  if(desiredDegreesOffCenter > degreesOffCenter + 1) {
+  if(desiredDegreesOffCenter > currentDegreesOffCenter + 1) {
     right();
-  } else if (desiredDegreesOffCenter < degreesOffCenter - 1) {
+  } else if (desiredDegreesOffCenter < currentDegreesOffCenter - 1) {
     left();
   } else {
     if(isOn())
