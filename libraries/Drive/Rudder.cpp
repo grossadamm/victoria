@@ -37,21 +37,21 @@ void Rudder::right() {
 
 void Rudder::set(int leftRightCenter) { 
   //start moving the right way
-  int desiredPosition = smoothLeftRightCenter(leftRightCenter);
-  int currentPosition = position();
+  int desiredDegreesOffCenter = smoothLeftRightCenter(leftRightCenter);
+  int degreesOffCenter = degreesOffCenter();
   int oldPosition = _currentRudderPosition;
   _currentRudderPosition = _encoder->read();
 
   if(isOn() && abs(oldPosition - _currentRudderPosition) < 10) {
-    // TODO stalled
+    _stalled = true
     off();
     return;
   }
 
   // set only if the running average is not within 1 degree of the current position
-  if(desiredPosition > currentPosition + 1) {
+  if(desiredDegreesOffCenter > degreesOffCenter + 1) {
     right();
-  } else if (desiredPosition < currentPosition - 1) {
+  } else if (desiredDegreesOffCenter < degreesOffCenter - 1) {
     left();
   } else {
     if(isOn())
@@ -77,7 +77,7 @@ void Rudder::on()
   if(isOff()) {
     _power->rudder(true);
     _on = true;
-    
+
     if(_startCounts == 0) {
       setStartPosition();
     }
@@ -97,7 +97,7 @@ boolean Rudder::isOff() {
   return !_on;
 }
 
-int Rudder::position() {
+int Rudder::degreesOffCenter() {
   return (_encoder->read() - zeroPosition())/ENCODER_COUNTS_PER_DEGREE;
 }
 

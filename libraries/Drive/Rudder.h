@@ -15,14 +15,16 @@ class Rudder
     void attemptClear();
     void set(int leftRightCenter);
     int calculateRequiredPosition(int leftRightCenter);
-    int position();
+    int degreesOffCenter();
     void speed(int percent);
     void on();
     void off();
+    void stalled();
     boolean isOn();
     boolean isOff();
   private:
     boolean _on;
+    boolean _stalled;
     int _startCounts;
     void setStartPosition();
     int smoothLeftRightCenter(int leftRightCenter);
