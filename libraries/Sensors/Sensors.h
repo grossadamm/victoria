@@ -22,8 +22,7 @@ enum BatteryState
 {
   charging,
   floating,
-  draining,
-  reloading
+  draining
 };
 
 

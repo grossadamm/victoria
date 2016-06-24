@@ -1,7 +1,5 @@
 Pilot* pilot;
 
-// RUDDER REVOLUTION ENCODER COUNTS 126000
-
 void setup()
 {
   Serial.begin(115200);

@@ -10,7 +10,7 @@
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature temperatureSensors(&oneWire);
-DeviceAddress _thermometer = {0x28, 0xCD, 0x90, 0x29, 0x07, 0x00, 0x00, 0xE5};
+DeviceAddress _waterThermometer = {0x28, 0xCD, 0x90, 0x29, 0x07, 0x00, 0x00, 0xE5};
 
 Sensors::Sensors(Power* power)
 {
@@ -26,7 +26,7 @@ Temperatures Sensors::retrieveTemperatures()
 
   while((fahrenheit < -100 || fahrenheit > 170) && !timeout(futureTime, 3)) { // attempt for a second to retrieve temps
     temperatureSensors.requestTemperatures();
-    fahrenheit = DallasTemperature::toFahrenheit(temperatureSensors.getTempC(_thermometer));
+    fahrenheit = DallasTemperature::toFahrenheit(temperatureSensors.getTempC(_waterThermometer));
   }
   Temperatures temps = {fahrenheit, 0, 0, 0};
 
