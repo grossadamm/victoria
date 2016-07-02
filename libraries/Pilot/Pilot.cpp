@@ -19,6 +19,11 @@ Pilot::Pilot()
   _insideISBD = false;
 }
 
+void Pilot::resetWaypoints() 
+{
+  _nav->resetWaypoints();
+}
+
 // This is the "loop" that continues to making things go
 // first make sure we aren't burning up motors
 // then communicate as needed
@@ -121,11 +126,13 @@ void Pilot::processCommsData() {
     // _storage->motorTestRunFrequency(cmd.data);  // T**$ Run test every x motor runs
   else if(cmd.command == 'P') {
     if(cmd.data[0] == 1) {
-      _drive->mainDrive(cmd.data[1]);
+      _drive->mainDriveEnable(cmd.data[1]);
     } else if(cmd.data[0] == 2) {
-      _drive->secondaryDrive(cmd.data[1]);
+      _drive->secondaryDriveLeftEnable(cmd.data[1]);
     } else if(cmd.data[0] == 3) {
-      _drive->rudder(cmd.data[1]);
+      _drive->secondaryDriveRightEnable(cmd.data[1]);
+    } else if(cmd.data[0] == 4) {
+      _drive->rudderEnable(cmd.data[1]);
     }
     // P*1$ Enable motor x (1: main, 2: secondary, 3: rudder)
     // P*0$ Disable motor x (1: main, 2: secondary, 3: rudder)
@@ -137,12 +144,11 @@ void Pilot::processCommsData() {
 
 void Pilot::manual() {
   _drive->direction(_lastManualControlData.leftRightCenter);
-  _drive->speed(_lastManualControlData.forwardReverse);
+  // _drive->speed(_lastManualControlData.forwardReverse); // TODO
 }
 
 boolean Pilot::driveInterrupts() {
   if(_sensors->currentAbove15Amps()) {
-    _drive->currentExceeded();
     return true;
   }
 

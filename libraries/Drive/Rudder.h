@@ -16,6 +16,8 @@ class Rudder
     void set(int leftRightCenter);
     int calculateRequiredPosition(int leftRightCenter);
     int degreesOffCenter();
+    void enable(bool onOff);
+    bool disabled();
     void speed(int percent);
     void on();
     void off();
@@ -25,6 +27,7 @@ class Rudder
   private:
     boolean _on;
     boolean _stalled;
+    boolean _enabled;
     int _startCounts;
     void setStartPosition();
     int smoothLeftRightCenter(int leftRightCenter);

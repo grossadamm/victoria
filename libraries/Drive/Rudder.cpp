@@ -6,6 +6,7 @@ const PROGMEM int MAX_RUDDER_TURN_DEGREES = 30;
 const PROGMEM int MAX_RUDDER_STARTS_BEFORE_CALIBRATION = 500;
 const PROGMEM int ENCODER_COUNTS_PER_DEGREE = 350;
 const PROGMEM int POSITION_SET_ACCURACY = 10;
+const PROGMEM int LEFT_RIGHT_SHOULD_BE_AT_LEAST_FAR_APART = 20; // TODO
 
 Rudder::Rudder(Power* power, Sensors* sensors, Storage* storage)
 {
@@ -135,13 +136,25 @@ bool Rudder::stillMoving(int previousPosition, int currentPosition) {
   return abs(previousPosition - currentPosition) > POSITION_SET_ACCURACY;
 }
 
+void Rudder::attemptClear() {
+  
+}
+
+void Rudder::enable(bool onOff) {
+  _enabled = onOff;
+}
+
+bool Rudder::disabled() {
+  return _stalled || !_enabled;
+}
+
 void Rudder::setStartPosition() {
   time_t futureTime = 0;
   int startPosition =  _encoder->read();
   int leftPosition = 0;
   int rightPosition = 0;
   int middlePosition = 0;
-  // _power->killAllButLights();
+  // _power->killAllButLights(); TODO
   // _power->rudderBrake(false);
 
   // run left until against left block or 5 seconds whichever comes first
@@ -168,6 +181,11 @@ void Rudder::setStartPosition() {
 
   // calculate middle encoder position
   int positionDifference = rightPosition - leftPosition;
+  if(positionDifference < LEFT_RIGHT_SHOULD_BE_AT_LEAST_FAR_APART) {
+    _stalled = true;
+    return;
+  }
+
   if(positionDifference > 0) {
     middlePosition = leftPosition + (positionDifference/2);
   } else {

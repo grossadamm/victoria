@@ -16,7 +16,8 @@ class Power
     void rudder(boolean onOff);
     void rudderDirectionForward(boolean onOff);
     void rudderBrake(boolean onOff);
-    void secondaryDrive(boolean onOff);
+    void secondaryDriveLeft(boolean onOff);
+    void secondaryDriveRight(boolean onOff);
     void temps(boolean onOff);
 
     void killAllButLights();

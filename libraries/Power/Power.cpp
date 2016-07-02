@@ -15,6 +15,7 @@ Power::Power()
   pinMode(RUDDER_MOSFET, OUTPUT);
   pinMode(CENTER_MOSFET, OUTPUT);
   pinMode(LEFT_MOSFET, OUTPUT);
+  pinMode(RIGHT_MOSFET, OUTPUT);
   
 }
 
@@ -34,10 +35,13 @@ void Power::mainDrive(boolean onOff) {
   digitalWrite(CENTER_MOSFET, onOff ? HIGH : LOW);
 }
 
-void Power::secondaryDrive(boolean onOff) {
+void Power::secondaryDriveLeft(boolean onOff) {
   digitalWrite(LEFT_MOSFET, onOff ? HIGH : LOW);
 }
 
+void Power::secondaryDriveRight(boolean onOff) {
+  digitalWrite(RIGHT_MOSFET, onOff ? HIGH : LOW);
+}
 void Power::rfComms(boolean onOff) {
   digitalWrite(RF_MOSFET, onOff ? HIGH : LOW);
 }
@@ -71,6 +75,7 @@ void Power::killAllButLights() {
   rudder(false);
   rudderDirectionForward(false);
   rudderBrake(false);
-  secondaryDrive(false);
+  secondaryDriveLeft(false);
+  secondaryDriveRight(false);
   temps(false);
 }

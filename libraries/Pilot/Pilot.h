@@ -22,6 +22,7 @@ class Pilot
     void run();
     void insideISBD();
     void outsideISBD();
+    void resetWaypoints(); //TODO remove before deploy
   private:
     bool driveInterrupts();
     void drive();

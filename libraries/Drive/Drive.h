@@ -4,6 +4,9 @@
 #include "Arduino.h"
 #include "Navigation.h"
 #include "Rudder.h"
+#include "MainDrive.h"
+#include "SecondaryDriveLeft.h"
+#include "SecondaryDriveRight.h"
 #include "Storage.h"
 #include "Sensors.h"
 
@@ -19,20 +22,16 @@ class Drive
     boolean isOn();
     boolean isOff();
     void speed(int percent);
-    void mainDrive(bool onOff);
-    void secondaryDrive(bool onOff);
-    void rudder(bool onOff);
+    void mainDriveEnable(bool onOff);
+    void secondaryDriveLeftEnable(bool onOff);
+    void secondaryDriveRightEnable(bool onOff);
+    void rudderEnable(bool onOff);
   private:
-    void turnRudder(int leftRightCenter);
-    void turnSecondaryDrive(int leftRightCenter);
-    boolean _useMainDrive;
-    boolean _useRudder;
-    boolean _useSecondaryDrive;
-    int _mainDrive;
-    int _leftDrive;
-    int _rightDrive;
     int _runCount;
     Rudder* _rudder;
+    MainDrive* _mainDrive;
+    SecondaryDriveRight* _secondaryDriveRight;
+    SecondaryDriveLeft* _secondaryDriveLeft;
     Power* _power;
     Storage* _storage;
     boolean _on;

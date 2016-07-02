@@ -4,6 +4,7 @@ void setup()
 {
   Serial.begin(115200);
   pilot = new Pilot();
+  pilot->resetWaypoints(); //TODO remove before deploy
   Serial.println("Pilot initialized");
   delay(100); 
 }
@@ -14,7 +15,7 @@ void loop()
   time = millis();
   pilot->run();
   unsigned long diff = millis() - time;
-  if(diff>10) {
+  if(diff>10) { //TODO remove before deploy
     Serial.print("Took too long to run this loop! ");
     Serial.print(diff);
     Serial.println("ms");
