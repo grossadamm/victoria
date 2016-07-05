@@ -2,7 +2,7 @@
 #include "Sensors.h"
 #include "pins.h"
 
-const PROGMEM int MAX_CURRENT_DRAW = 10;
+const PROGMEM int MAX_CURRENT_DRAW = 10; // TODO what should this be if stalled, also if lost prop?
 
 SecondaryDriveLeft::SecondaryDriveLeft(Power* power, Sensors* sensors, int minPower)
 {
