@@ -13,8 +13,14 @@ MainDrive::MainDrive(Power* power, Sensors* sensors)
 }
 
 
-void MainDrive::forward() { 
-  _motor->write(map(20, -100, 100, 0, 179));
+void MainDrive::forward() {
+  if(isOn() && tooMuchCurrentDraw()) {
+    _stalled = true;
+  }
+  if(!disabled()){
+    on();
+    _motor->write(map(20, -100, 100, 0, 179));
+  }
 }
 
 void MainDrive::off()

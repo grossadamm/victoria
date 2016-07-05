@@ -13,6 +13,12 @@ SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors, int min
 
 
 void SecondaryDriveRight::set(bool mainDrive, bool secondaryDriveLeft, int leftRightCenter) { 
+  if(isOn() && tooMuchCurrentDraw()) {
+    _stalled = true;
+  }
+  if(disabled()){
+    return;
+  }
   int maxPowerIncrease = 30;
   int minPower = 0;
   int out = 0;
@@ -33,6 +39,7 @@ void SecondaryDriveRight::set(bool mainDrive, bool secondaryDriveLeft, int leftR
   }
 
   out = map(out, -180, 180, 0, 179);
+  on();
   _motor->write(out);
 }
 
