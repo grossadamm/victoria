@@ -5,7 +5,6 @@
 #include "SecondaryDriveRight.h"
 #include "Sensors.h"
 
-const PROGMEM int MAIN_DRIVE_MIN_POWER = 20;
 const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
 Drive::Drive(Power* power, Storage* storage, Sensors* sensors)

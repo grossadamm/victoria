@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "Power.h"
 #include "Sensors.h" 
+#include "Servo.h"
 
 class MainDrive
 {
@@ -24,6 +25,7 @@ class MainDrive
     boolean _enabled;
     Power* _power;
     Sensors* _sensors;
+    Servo* _motor;
 };
 
 #endif
