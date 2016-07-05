@@ -4,11 +4,12 @@
 #include "Arduino.h"
 #include "Power.h"
 #include "Sensors.h" 
+#include "Servo.h"
 
 class SecondaryDriveRight
 {
   public:
-    SecondaryDriveRight(Power* power, Sensors* sensors);
+    SecondaryDriveRight(Power* power, Sensors* sensors, int minPower);
     void attemptClear();
     void set(bool mainDrive, bool secondaryDriveLeft, int leftRightCenter);
     void enable(bool onOff);
@@ -24,6 +25,8 @@ class SecondaryDriveRight
     boolean _enabled;
     Power* _power;
     Sensors* _sensors;
+    Servo* _motor;
+    int _minPower;
 };
 
 #endif

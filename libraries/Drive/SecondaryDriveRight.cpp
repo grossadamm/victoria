@@ -2,11 +2,13 @@
 #include "Sensors.h"
 #include "pins.h"
 
-SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors)
+SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors, int minPower)
 {
   _on = false;
   _power = power;
   _sensors = sensors;
+  _minPower = minPower;
+  _motor = new Servo();
 }
 
 
@@ -30,17 +32,20 @@ void SecondaryDriveRight::set(bool mainDrive, bool secondaryDriveLeft, int leftR
     out = minPower + abs(scaledTurn);
   }
 
-  // TODO set out
+  out = map(out, -180, 180, 0, 179);
+  _motor->write(out);
 }
 
 void SecondaryDriveRight::off()
 {
+  _motor->detach();
   _power->secondaryDriveRight(false);
   _on = false;
 }
 
 void SecondaryDriveRight::on()
 {
+  _motor->attach(RIGHT_PWM);
   _power->secondaryDriveRight(true);
   _on = true;  
 }

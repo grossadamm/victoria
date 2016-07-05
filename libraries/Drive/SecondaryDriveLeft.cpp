@@ -8,6 +8,7 @@ SecondaryDriveLeft::SecondaryDriveLeft(Power* power, Sensors* sensors, int minPo
   _power = power;
   _sensors = sensors;
   _minPower = minPower;
+  _motor = new Servo();
 }
 
 
@@ -32,17 +33,20 @@ void SecondaryDriveLeft::set(bool mainDrive, bool secondaryDriveRight, int leftR
     }
   }
 
-  // TODO set out
+  out = map(out, -180, 180, 0, 179);
+  _motor->write(out);
 }
 
 void SecondaryDriveLeft::off()
 {
+  _motor->detach();
   _power->secondaryDriveLeft(false);
   _on = false;
 }
 
 void SecondaryDriveLeft::on()
 {
+  _motor->attach(LEFT_PWM);
   _power->secondaryDriveLeft(true);
   _on = true;  
 }
