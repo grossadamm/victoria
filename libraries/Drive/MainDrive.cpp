@@ -3,6 +3,7 @@
 #include "pins.h"
 
 const PROGMEM int MIN_POWER = 20;
+const PROGMEM int MAX_CURRENT_DRAW = 10;
 
 MainDrive::MainDrive(Power* power, Sensors* sensors)
 {
@@ -37,11 +38,11 @@ void MainDrive::on()
   _on = true;  
 }
 
-boolean MainDrive::isOn() {
+bool MainDrive::isOn() {
   return _on;
 }
 
-boolean MainDrive::isOff() {
+bool MainDrive::isOff() {
   return !_on;
 }
 
@@ -55,4 +56,8 @@ void MainDrive::enable(bool onOff) {
 
 bool MainDrive::disabled() {
   return _stalled || !_enabled;
+}
+
+bool MainDrive::tooMuchCurrentDraw() {
+  _sensors->currentDrawCenter() > MAX_CURRENT_DRAW;
 }

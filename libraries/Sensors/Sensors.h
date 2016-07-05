@@ -31,14 +31,17 @@ class Sensors
   public:
     Sensors(Power* power);
     Temperatures retrieveTemperatures();
-    boolean night();
-    boolean day();
-    boolean batteryAbove(int percent);
-    boolean batteryBelow(int percent);
-    boolean currentAbove15Amps();
-    boolean storming();
-    boolean timeout(time_t& futureTime, int seconds);
+    bool night();
+    bool day();
+    bool batteryAbove(int percent);
+    bool batteryBelow(int percent);
+    bool currentAbove15Amps();
+    bool storming();
+    bool timeout(time_t& futureTime, int seconds);
     BatteryState batteryState();
+    int currentDrawLeft();
+    int currentDrawRight();
+    int currentDrawCenter();
   private:
     Power* _power;
     int _one_wire_bus;

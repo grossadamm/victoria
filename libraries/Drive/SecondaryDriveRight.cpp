@@ -2,6 +2,8 @@
 #include "Sensors.h"
 #include "pins.h"
 
+const PROGMEM int MAX_CURRENT_DRAW = 10;
+
 SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors, int minPower)
 {
   _on = false;
@@ -57,11 +59,11 @@ void SecondaryDriveRight::on()
   _on = true;  
 }
 
-boolean SecondaryDriveRight::isOn() {
+bool SecondaryDriveRight::isOn() {
   return _on;
 }
 
-boolean SecondaryDriveRight::isOff() {
+bool SecondaryDriveRight::isOff() {
   return !_on;
 }
 
@@ -75,4 +77,8 @@ void SecondaryDriveRight::enable(bool onOff) {
 
 bool SecondaryDriveRight::disabled() {
   return _stalled || !_enabled;
+}
+
+bool SecondaryDriveRight::tooMuchCurrentDraw() {
+  _sensors->currentDrawRight() > MAX_CURRENT_DRAW;
 }

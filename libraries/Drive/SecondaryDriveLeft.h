@@ -17,12 +17,13 @@ class SecondaryDriveLeft
     void on();
     void off();
     void stalled();
-    boolean isOn();
-    boolean isOff();
+    bool isOn();
+    bool isOff();
+    bool tooMuchCurrentDraw();
   private:
-    boolean _on;
-    boolean _stalled;
-    boolean _enabled;
+    bool _on;
+    bool _stalled;
+    bool _enabled;
     Power* _power;
     Sensors* _sensors;
     Servo* _motor;

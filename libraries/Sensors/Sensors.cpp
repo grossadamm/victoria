@@ -6,9 +6,9 @@
 #include "Wire.h"
 #include "DS1307RTC.h"
 
-#define ONE_WIRE_BUS 2
+#include "pins.h"
 
-OneWire oneWire(ONE_WIRE_BUS);
+OneWire oneWire(ONE_WIRE);
 DallasTemperature temperatureSensors(&oneWire);
 DeviceAddress _waterThermometer = {0x28, 0xCD, 0x90, 0x29, 0x07, 0x00, 0x00, 0xE5};
 
@@ -34,36 +34,36 @@ Temperatures Sensors::retrieveTemperatures()
   return temps;
 }
 
-boolean Sensors::night()
+bool Sensors::night()
 {
   return false;
 }
 
-boolean Sensors::day()
+bool Sensors::day()
 {
   return true;
 }
 
-boolean Sensors::batteryAbove(int percent)
+bool Sensors::batteryAbove(int percent)
 {
   return true;
 }
 
-boolean Sensors::batteryBelow(int percent)
+bool Sensors::batteryBelow(int percent)
 {
   return false;
 }
 
-boolean Sensors::currentAbove15Amps()
+bool Sensors::currentAbove15Amps()
 {
   return false;
 }
 
-boolean Sensors::storming() {
+bool Sensors::storming() {
   return false;
 }
 
-boolean Sensors::timeout(time_t& futureTime, int seconds) {
+bool Sensors::timeout(time_t& futureTime, int seconds) {
   if(futureTime == 0) {
     futureTime = now() + seconds;
   } 
@@ -76,4 +76,16 @@ boolean Sensors::timeout(time_t& futureTime, int seconds) {
 
 BatteryState Sensors::batteryState() {
   return floating;
+}
+
+int Sensors::currentDrawLeft() {
+  return map(analogRead(LEFT_CURRENT_DRAW), 0, 1024, -30, 30);
+}
+
+int Sensors::currentDrawRight() {
+  return map(analogRead(RIGHT_CURRENT_DRAW), 0, 1024, -30, 30);
+}
+
+int Sensors::currentDrawCenter() {
+  return map(analogRead(CENTER_CURRENT_DRAW), 0, 1024, -30, 30);
 }
