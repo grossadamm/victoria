@@ -11,7 +11,26 @@ SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors)
 
 
 void SecondaryDriveRight::set(bool mainDrive, bool secondaryDriveLeft, int leftRightCenter) { 
+  int maxPowerIncrease = 30;
+  int minPower = 0;
+  int out = 0;
 
+  if(!mainDrive) {
+    minPower = _minPower;
+    out = minPower;
+  }
+  int scaledTurn = leftRightCenter/maxPowerIncrease;
+  if(scaledTurn > 1) {
+    if(!secondaryDriveLeft) {
+      out = 0 - (minPower + abs(scaledTurn));
+    } else {
+      out = minPower;  
+    }
+  } else if(scaledTurn < -1) {
+    out = minPower + abs(scaledTurn);
+  }
+
+  // TODO set out
 }
 
 void SecondaryDriveRight::off()

@@ -16,8 +16,8 @@ Drive::Drive(Power* power, Storage* storage, Sensors* sensors)
   _runCount = 0;
   _rudder = new Rudder(power, sensors, storage);
   _mainDrive = new MainDrive(power, sensors);
-  _secondaryDriveLeft = new SecondaryDriveLeft(power, sensors);
-  _secondaryDriveRight = new SecondaryDriveRight(power, sensors);
+  _secondaryDriveLeft = new SecondaryDriveLeft(power, sensors, SECONDARY_DRIVE_MIN_POWER);
+  _secondaryDriveRight = new SecondaryDriveRight(power, sensors, SECONDARY_DRIVE_MIN_POWER);
 }
 
 void Drive::off()
@@ -65,9 +65,12 @@ void Drive::direction(int leftRightCenter) {
 
   if(!_rudder->disabled() && !_mainDrive->disabled()) { // use the rudder to control
     _rudder->set(leftRightCenter);
+    _secondaryDriveLeft->off();
+    _secondaryDriveRight->off();
   } else {
     _secondaryDriveLeft->set(_mainDrive->disabled(), _secondaryDriveRight->disabled(), leftRightCenter);
     _secondaryDriveRight->set(_mainDrive->disabled(), _secondaryDriveLeft->disabled(), leftRightCenter);
+    _rudder->off();
   }
 }  
 
