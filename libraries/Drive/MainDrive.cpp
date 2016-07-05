@@ -3,7 +3,7 @@
 #include "pins.h"
 
 const PROGMEM int MIN_POWER = 20;
-const PROGMEM int MAX_CURRENT_DRAW = 10;
+const PROGMEM int MAX_CURRENT_DRAW = 10; // TODO what should this be if stalled, also if lost prop?
 
 MainDrive::MainDrive(Power* power, Sensors* sensors)
 {
@@ -47,7 +47,23 @@ bool MainDrive::isOff() {
 }
 
 void MainDrive::attemptClear() {
-
+  on();
+  _motor->write(map(-20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(-100, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(100, -100, 100, 0, 179));
+  delay(2000);
+  _stalled = false;
+  off();
 }
 
 void MainDrive::enable(bool onOff) {

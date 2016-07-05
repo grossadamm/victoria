@@ -69,8 +69,23 @@ bool SecondaryDriveLeft::isOff() {
 }
 
 void SecondaryDriveLeft::attemptClear() {
-  // 1/2 power forward/back
-  // full power forward/back
+  on();
+  _motor->write(map(-20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(-100, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(100, -100, 100, 0, 179));
+  delay(2000);
+  _stalled = false;
+  off();
 }
 
 void SecondaryDriveLeft::enable(bool onOff) {

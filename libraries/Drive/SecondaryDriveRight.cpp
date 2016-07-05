@@ -2,7 +2,7 @@
 #include "Sensors.h"
 #include "pins.h"
 
-const PROGMEM int MAX_CURRENT_DRAW = 10;
+const PROGMEM int MAX_CURRENT_DRAW = 10; // TODO what should this be if stalled, also if lost prop?
 
 SecondaryDriveRight::SecondaryDriveRight(Power* power, Sensors* sensors, int minPower)
 {
@@ -68,7 +68,23 @@ bool SecondaryDriveRight::isOff() {
 }
 
 void SecondaryDriveRight::attemptClear() {
-  
+  on();
+  _motor->write(map(-20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(20, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(-100, -100, 100, 0, 179));
+  delay(2000);
+  _motor->write(map(0, -100, 100, 0, 179));
+  delay(200);
+  _motor->write(map(100, -100, 100, 0, 179));
+  delay(2000);
+  _stalled = false;
+  off();
 }
 
 void SecondaryDriveRight::enable(bool onOff) {
