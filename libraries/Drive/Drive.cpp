@@ -18,6 +18,7 @@ Drive::Drive(Power* power, Storage* storage, Sensors* sensors)
   _mainDrive = new MainDrive(power, sensors);
   _secondaryDriveLeft = new SecondaryDriveLeft(power, sensors, SECONDARY_DRIVE_MIN_POWER);
   _secondaryDriveRight = new SecondaryDriveRight(power, sensors, SECONDARY_DRIVE_MIN_POWER);
+  // TODO ESC CALIBRATION??
 }
 
 void Drive::off()
