@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "TinyGPS++.h"
 #include "Sensors.h"
-#include <Adafruit_HMC5883_U.h>
+#include "Adafruit_HMC5883_U.h"
 #include "Storage.h"
 
 class Navigation
