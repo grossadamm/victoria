@@ -1,0 +1,3 @@
+[submodule "libraries/Adafruit_HMC5883_Unified"]
+	path = libraries/Adafruit_HMC5883_Unified
+	url = git@github.com:grossadamm/Adafruit_HMC5883_Unified.git

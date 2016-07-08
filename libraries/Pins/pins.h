@@ -1,3 +1,4 @@
+#include "Arduino.h"
 // PINS
 // Analog
 const PROGMEM int VOLTAGE_FROM_RUDDER___SHIELD =  0;
