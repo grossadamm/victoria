@@ -36,12 +36,15 @@ Temperatures Sensors::retrieveTemperatures()
 
 bool Sensors::night()
 {
-  return false;
+  !day();
 }
 
 bool Sensors::day()
 {
-  return true;
+  _power->photocell(true);
+  delay(3);
+  map(analogRead(PHOTOCELL), 0, 1023, 0, 10) > 6;
+  _power->photocell(false);
 }
 
 bool Sensors::batteryAbove(int percent)
