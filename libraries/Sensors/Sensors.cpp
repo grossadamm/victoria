@@ -8,14 +8,14 @@
 
 #include "pins.h"
 
-OneWire oneWire(ONE_WIRE);
-DallasTemperature temperatureSensors(&oneWire);
 DeviceAddress _waterThermometer = {0x28, 0xCD, 0x90, 0x29, 0x07, 0x00, 0x00, 0xE5};
 
 Sensors::Sensors(Power* power)
 {
   _power = power;
   _when_times_out = 0;
+  _oneWire = new OneWire(ONE_WIRE);
+  _temperatureSensors = new DallasTemperature(_oneWire);
 }
 
 Temperatures Sensors::retrieveTemperatures()
@@ -25,8 +25,8 @@ Temperatures Sensors::retrieveTemperatures()
   _power->temps(true);
 
   while((fahrenheit < -100 || fahrenheit > 170) && !timeout(futureTime, 3)) { // attempt for a second to retrieve temps
-    temperatureSensors.requestTemperatures();
-    fahrenheit = DallasTemperature::toFahrenheit(temperatureSensors.getTempC(_waterThermometer));
+    _temperatureSensors->requestTemperatures();
+    fahrenheit = DallasTemperature::toFahrenheit(_temperatureSensors->getTempC(_waterThermometer));
   }
   Temperatures temps = {fahrenheit, 0, 0, 0};
 

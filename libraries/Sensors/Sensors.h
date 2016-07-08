@@ -25,7 +25,6 @@ enum BatteryState
   draining
 };
 
-
 class Sensors
 {
   public:
@@ -42,6 +41,8 @@ class Sensors
     int currentDrawLeft();
     int currentDrawRight();
     int currentDrawCenter();
+    OneWire* _oneWire;
+    DallasTemperature *_temperatureSensors;
   private:
     Power* _power;
     int _one_wire_bus;
