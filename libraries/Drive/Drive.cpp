@@ -72,24 +72,7 @@ void Drive::direction(int leftRightCenter) {
     _secondaryDriveRight->set(_mainDrive->disabled(), _secondaryDriveLeft->disabled(), leftRightCenter);
     _rudder->off();
   }
-}  
-
-// void Drive::turnSecondaryDrive(int leftRightCenter) {
-//   int maxPowerIncrease = 30;
-//   int minPower = 0;
-//   if(!_useMainDrive) {
-//     minPower = SECONDARY_DRIVE_MIN_POWER;
-//   }
-//   int scaledTurn = leftRightCenter/maxPowerIncrease;
-//   if(scaledTurn > 1) {
-//     _leftDrive = minPower + abs(scaledTurn);
-//     _rightDrive = minPower;
-//   } else if(scaledTurn < -1) {
-//     _rightDrive = minPower + abs(scaledTurn);
-//     _leftDrive = minPower;
-//   }
-// }
-
+}
 
 void Drive::mainDriveEnable(bool onOff) {
   _mainDrive->enable(onOff);

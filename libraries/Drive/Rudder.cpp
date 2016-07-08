@@ -137,7 +137,11 @@ bool Rudder::stillMoving(int previousPosition, int currentPosition) {
 }
 
 void Rudder::attemptClear() {
-  
+  right();
+  delay(2000);
+  left();
+  delay(2000);
+  setStartPosition();
 }
 
 void Rudder::enable(bool onOff) {

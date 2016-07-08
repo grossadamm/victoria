@@ -31,7 +31,6 @@ void SecondaryDriveLeft::set(bool mainDrive, bool secondaryDriveRight, int leftR
   }
   int scaledTurn = leftRightCenter/maxPowerIncrease;
   if(scaledTurn > 1) {
-    // set to 
     out = minPower + abs(scaledTurn);
   } else if(scaledTurn < -1) {
     if(!secondaryDriveRight) {
