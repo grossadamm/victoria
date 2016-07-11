@@ -177,17 +177,12 @@ void Pilot::smartSleep(int minutes) {
 }
 
 void Pilot::drive() {
-  if(_drive->isOn() && _sensors->batteryAbove(50)) { // continue driving while battery good
+  if((_drive->isOn() && _sensors->batteryAbove(50)) ||  // continue driving while battery good
+    (_drive->isOff() && _sensors->batteryState() == floating)) { // don't start again until battery floats
     setCourse();
     return;
   }
-
-  BatteryState batteryState = _sensors->batteryState();
-
-  if(_drive->isOff() && batteryState == floating) { // don't start again until battery floats
-    setCourse(); // TODO high risk point
-    return;
-  }
+  // TODO what happens if battery never gets to float. should have a timer fail safe
 }
 
 boolean Pilot::waitForNav() {
