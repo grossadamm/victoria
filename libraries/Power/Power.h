@@ -19,6 +19,7 @@ class Power
     void secondaryDriveLeft(boolean onOff);
     void secondaryDriveRight(boolean onOff);
     void temps(boolean onOff);
+    void photocell(boolean onOff);
 
     void killAllButLights();
 };

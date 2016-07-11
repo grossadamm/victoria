@@ -69,7 +69,7 @@ void Drive::direction(int leftRightCenter) {
     _secondaryDriveRight->set(_mainDrive->disabled(), _secondaryDriveLeft->disabled(), leftRightCenter);
     _rudder->off();
   }
-}  
+}
 
 void Drive::mainDriveEnable(bool onOff) {
   _mainDrive->enable(onOff);

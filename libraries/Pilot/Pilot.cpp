@@ -60,10 +60,10 @@ void Pilot::outsideISBD(){
 
 void Pilot::manageLights() {
   if(_sensors->night() && _sensors->batteryAbove(45)) {
-   // lights on
+    _power->lights(true);
   }
   if(_sensors->day() || _sensors->batteryBelow(45)) {
-    // lights off
+    _power->lights(false);
   }
 }
 
@@ -89,7 +89,7 @@ void Pilot::manageComms() {
   }
 }
 
-void Pilot::processCommsData() {
+void Pilot::processCommsData() { //TODO finish this
   Command cmd = _comms->readControlData();
   Serial.print("New command: ");
   Serial.println(cmd.command);

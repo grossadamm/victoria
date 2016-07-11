@@ -16,6 +16,7 @@ Power::Power()
   pinMode(CENTER_MOSFET, OUTPUT);
   pinMode(LEFT_MOSFET, OUTPUT);
   pinMode(RIGHT_MOSFET, OUTPUT);
+  pinMode(PHOTORESISTOR_MOSFET, OUTPUT);
   
 }
 
@@ -66,6 +67,10 @@ void Power::temps(boolean onOff) {
   digitalWrite(TEMP_MOSFET, onOff ? HIGH : LOW);
 }
 
+void Power::photocell(boolean onOff) {
+  digitalWrite(PHOTORESISTOR_MOSFET, onOff ? HIGH : LOW);
+}
+
 void Power::killAllButLights() {
   gps(false);
   gpsComms(false);
@@ -78,4 +83,5 @@ void Power::killAllButLights() {
   secondaryDriveLeft(false);
   secondaryDriveRight(false);
   temps(false);
+  photocell(false);
 }
