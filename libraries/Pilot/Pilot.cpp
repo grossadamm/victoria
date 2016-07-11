@@ -186,7 +186,6 @@ void Pilot::drive() {
 
   if(_drive->isOff() && batteryState == floating) { // don't start again until battery floats
     setCourse(); // TODO high risk point
-    _drive->on();
     return;
   }
 }
@@ -220,5 +219,5 @@ boolean Pilot::waitForNav() {
 
 void Pilot::setCourse() {
   waitForNav();
-  _drive->direction(_nav->courseChangeNeeded()); // TODO is it possible to set change while drive off?
+  _drive->direction(_nav->courseChangeNeeded());
 }

@@ -9,7 +9,6 @@ const PROGMEM int SECONDARY_DRIVE_MIN_POWER = 20;
 
 Drive::Drive(Power* power, Storage* storage, Sensors* sensors)
 {
-  _on = false;
   _power = power;
   _storage = storage;
   _runCount = 0;
@@ -26,7 +25,6 @@ void Drive::off()
   _mainDrive->off();
   _secondaryDriveLeft->off();
   _secondaryDriveRight->off();
-  _on = false;
 }
 
 void Drive::on()
@@ -38,16 +36,14 @@ void Drive::on()
       _runCount = 0;
     }
   }
-  // turn on
-  _on = true;
 }
 
 boolean Drive::isOn() {
-  return _on;
+  return _mainDrive->isOn() || _rudder->isOn() || _secondaryDriveLeft->isOn() || _secondaryDriveRight->isOn();
 }
 
 boolean Drive::isOff() {
-  return !_on;
+  return !isOn();
 }
 
 void Drive::attemptClear()
@@ -59,6 +55,7 @@ void Drive::attemptClear()
 }
 
 void Drive::direction(int leftRightCenter) { 
+  on();
   if(!_mainDrive->disabled()) {
     _mainDrive->forward();
   }
@@ -73,23 +70,6 @@ void Drive::direction(int leftRightCenter) {
     _rudder->off();
   }
 }  
-
-// void Drive::turnSecondaryDrive(int leftRightCenter) {
-//   int maxPowerIncrease = 30;
-//   int minPower = 0;
-//   if(!_useMainDrive) {
-//     minPower = SECONDARY_DRIVE_MIN_POWER;
-//   }
-//   int scaledTurn = leftRightCenter/maxPowerIncrease;
-//   if(scaledTurn > 1) {
-//     _leftDrive = minPower + abs(scaledTurn);
-//     _rightDrive = minPower;
-//   } else if(scaledTurn < -1) {
-//     _rightDrive = minPower + abs(scaledTurn);
-//     _leftDrive = minPower;
-//   }
-// }
-
 
 void Drive::mainDriveEnable(bool onOff) {
   _mainDrive->enable(onOff);

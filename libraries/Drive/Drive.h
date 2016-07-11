@@ -34,7 +34,6 @@ class Drive
     SecondaryDriveLeft* _secondaryDriveLeft;
     Power* _power;
     Storage* _storage;
-    boolean _on;
 };
 
 #endif
