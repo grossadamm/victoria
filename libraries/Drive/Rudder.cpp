@@ -44,7 +44,7 @@ void Rudder::set(int leftRightCenter) {
   _currentRudderPosition = _encoder->read();
 
   if(isOn() && abs(oldPosition - _currentRudderPosition) < 10) {
-    _stalled = true;
+    _stalled = true; // TODO verify this is true IRL testing
     off();
     return;
   }
@@ -55,8 +55,6 @@ void Rudder::set(int leftRightCenter) {
   } else if (desiredDegreesOffCenter < currentDegreesOffCenter - 1) {
     left();
   } else {
-    if(isOn())
-      Serial.println("Rudder now set");
     stop();
   }
 }

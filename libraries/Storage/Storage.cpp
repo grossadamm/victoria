@@ -15,7 +15,8 @@ const PROGMEM int DAY_LAST_COMMUNICATED_STORAGE_POSITION = 2;
 const PROGMEM int COMMUNICATION_INTERVAL_DAYS_POSITION = 3;
 const PROGMEM int MOTOR_TEST_RUN_FREQUENCY_POSITION = 4;
 const PROGMEM int RUDDER_ZERO_POSITION_POSITION = 5;
-const PROGMEM int WAYPOINT_STORAGE_POSITION = 6;
+const PROGMEM int NAV_FAILURES_POSITION = 6;
+const PROGMEM int WAYPOINT_STORAGE_POSITION = 7;
 
 void Storage::lastCommunicatedOn(int day) {
   EEPROM.write(DAY_LAST_COMMUNICATED_STORAGE_POSITION, (char) day);
@@ -49,10 +50,18 @@ int Storage::rudderZeroPosition() {
   (int) EEPROM.read(RUDDER_ZERO_POSITION_POSITION);
 }
 
+void Storage::navFailures(int navFailures) {
+  EEPROM.write(NAV_FAILURES_POSITION, (char) navFailures);
+}
+
+int Storage::navFailures() {
+  (int) EEPROM.read(NAV_FAILURES_POSITION);
+}
+
 // Waypoints
 const PROGMEM Waypoint CHECKSUM_FAILED_WAYPOINT  = {999.99, 999.99, 255};
 const PROGMEM int WAYPOINT_SIZE = 11;
-const PROGMEM int MAX_WAYPOINTS = 362;
+const PROGMEM int MAX_WAYPOINTS = 362; // TODO recalculate
 
 void Storage::StoreWaypoint(Waypoint waypoint, int position)
 {

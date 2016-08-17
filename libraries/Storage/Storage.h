@@ -29,6 +29,9 @@ class Storage
     void rudderZeroPosition(int rudderZeroPosition);
     int rudderZeroPosition();
 
+    void navFailures(int navFailures);
+    int navFailures();
+
     void AppendNewWaypoint(Waypoint waypoint);
     void StoreWaypoint(Waypoint waypoint, int waypointNumber);
     Waypoint RetrieveWaypoint(int waypointNumber);

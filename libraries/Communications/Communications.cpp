@@ -18,7 +18,7 @@ Communications::Communications(Navigation *nav, Sensors *sensors, Power* power, 
   setSyncProvider(RTC.get); 
 }
 
-void Communications::buildMessage(byte message[50])
+void Communications::buildMessage(byte message[50]) // TODO apply storage vars
 {
   for(int i = 0; i < 50; i++) {
     message[i] = 0;

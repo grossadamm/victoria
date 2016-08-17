@@ -43,27 +43,27 @@ bool Sensors::day()
 {
   _power->photocell(true);
   delay(3);
-  map(analogRead(PHOTOCELL), 0, 1023, 0, 10) > 6;
+  map(analogRead(PHOTOCELL), 0, 1023, 0, 10) > 6; // TODO valid?
   _power->photocell(false);
 }
 
 bool Sensors::batteryAbove(int percent)
 {
-  return true;
+  return true; // TODO
 }
 
 bool Sensors::batteryBelow(int percent)
 {
-  return false;
+  return false; // TODO
 }
 
 bool Sensors::currentAbove15Amps()
 {
-  return false;
+  return false; // TODO
 }
 
 bool Sensors::storming() {
-  return false;
+  return false; // TODO
 }
 
 bool Sensors::timeout(time_t& futureTime, int seconds) {
@@ -78,7 +78,7 @@ bool Sensors::timeout(time_t& futureTime, int seconds) {
 }
 
 BatteryState Sensors::batteryState() {
-  return floating;
+  return floating; // TODO
 }
 
 int Sensors::currentDrawLeft() {

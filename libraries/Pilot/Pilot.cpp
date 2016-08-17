@@ -6,6 +6,8 @@
 #include "LowPower.h"
 #include "Time.h"
 
+const PROGMEM int TWELVE_HOURS_IN_MINUTES = 720;
+
 Pilot::Pilot()
 {
   _storage = new Storage();
@@ -45,7 +47,6 @@ void Pilot::run()
   drive();
 
   if(_drive->isOff()) { // if drive is off, we must not be ready to go, sleep
-    Serial.println("Would sleep for 10");
     smartSleep(10);
   }
 }
@@ -186,7 +187,7 @@ void Pilot::drive() {
 }
 
 boolean Pilot::waitForNav() {
-  int attempts = 0;
+  int connectAfterSleepAttempts = 0;
   time_t futureTime = 0;
   if(!_nav->ready()) {
     _drive->off(); // TODO high risk point
@@ -203,16 +204,25 @@ boolean Pilot::waitForNav() {
       Serial.println("Nav failed after 45 seconds, sleeping");
       delay(100);
       smartSleep(1);
-      attempts++;
+      connectAfterSleepAttempts++;
     }
-    if(_nav->ready())
+    if(_nav->ready()){
       Serial.println("Nav now ready!");
+      return true;
+    }
+    if(connectAfterSleepAttempts > TWELVE_HOURS_IN_MINUTES) { // works out to almost 24 hours of attempts
+      return false;
+    }
   }
 
   return true;
 }
 
 void Pilot::setCourse() {
-  waitForNav();
-  _drive->direction(_nav->courseChangeNeeded());
+  if(waitForNav()) {
+    _drive->direction(_nav->courseChangeNeeded());
+  } else {
+    _storage->navFailures(_storage->navFailures() + 1);
+    _drive->off();
+  }
 }
