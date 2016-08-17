@@ -85,3 +85,10 @@ void Power::killAllButLights() {
   temps(false);
   photocell(false);
 }
+
+void Power::killMotors() {
+  mainDrive(false);
+  rudder(false);
+  secondaryDriveLeft(false);
+  secondaryDriveRight(false);
+}

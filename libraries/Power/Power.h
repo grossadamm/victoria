@@ -22,6 +22,7 @@ class Power
     void photocell(boolean onOff);
 
     void killAllButLights();
+    void killMotors();
 };
 
 #endif

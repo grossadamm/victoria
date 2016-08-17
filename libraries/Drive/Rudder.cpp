@@ -151,13 +151,12 @@ bool Rudder::disabled() {
 }
 
 void Rudder::setStartPosition() {
+  _power->killMotors();
   time_t futureTime = 0;
   int startPosition =  _encoder->read();
   int leftPosition = 0;
   int rightPosition = 0;
   int middlePosition = 0;
-  // _power->killAllButLights(); TODO
-  // _power->rudderBrake(false);
 
   // run left until against left block or 5 seconds whichever comes first
   on();
